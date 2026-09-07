@@ -56,7 +56,11 @@ DIR="$(verify_workflow_root "$DIR")"
 SESSION="$(tmux display-message -p '#{session_name}')"
 WIN="${SESSION}:test"
 CREATED=0
-TEST_CMD=""
+if [ "$WATCH" = 1 ]; then
+    TEST_CMD="$(project_test_cmd "$DIR" watch)"
+else
+    TEST_CMD="$(project_test_cmd "$DIR" once)"
+fi
 
 test_layout_ok() {
     local wh ww btop_h btop_w pane_count
@@ -97,11 +101,6 @@ test_launch_pane() {
 if test_layout_ok; then
     tmux select-window -t 'test'
     if [ "$RUN_ONLY" = 1 ]; then
-        if [ "$WATCH" = 1 ]; then
-            TEST_CMD="$(project_test_cmd "$DIR" watch)"
-        else
-            TEST_CMD="$(project_test_cmd "$DIR" once)"
-        fi
         tmux send-keys -t "${WIN}.1" C-c 2>/dev/null || true
         test_launch_pane "${WIN}.1" 'TEST' "$TEST_CMD"
         tmux select-pane -t "${WIN}.1"
@@ -126,11 +125,6 @@ else
             "$(verify_missing_pkg_echo btop 'btop not installed')"
     fi
 
-    if [ "$WATCH" = 1 ]; then
-        TEST_CMD="$(project_test_cmd "$DIR" watch)"
-    else
-        TEST_CMD="$(project_test_cmd "$DIR" once)"
-    fi
     test_launch_pane "${WIN}.1" 'TEST' "$TEST_CMD"
     CREATED=1
 fi

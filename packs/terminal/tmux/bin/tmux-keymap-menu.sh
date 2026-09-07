@@ -13,7 +13,7 @@ TEST="$SCRIPT_DIR/agent-test-layout.sh"
 CYCLE="$SCRIPT_DIR/tmux-cycle-layout.sh"
 
 if [ -z "${TMUX:-}" ]; then
-    echo "tmux-keymap-menu: must run inside tmux" >&2
+    echo "run: tn  (then Prefix+?)" >&2
     exit 1
 fi
 

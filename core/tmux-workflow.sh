@@ -3,17 +3,25 @@
 # Provenance: shellyxz.sh core/aliases.sh + agent_* slice of core/functions.sh (trimmed).
 # Calls packs/terminal/tmux/bin layout scripts; does not pull the full functions.sh melt.
 
+_packedbox_root() {
+    printf '%s\n' "${PACKEDBOX_ROOT:-$HOME/.config/packedbox}"
+}
+
+_packedbox_is_dir_arg() {
+    [ "$1" = . ] || [ -d "$1" ]
+}
+
+# $1 = next helper name shown in the first-run one-liner (ab|av|at).
 _packedbox_tmux_guard() {
+    _pb_next="${1:-av}"
     if [ -z "${TMUX:-}" ]; then
-        # One-liner first — opaque "not in tmux" confuses first-run cloud desktops.
-        echo "run: tn  (then av)" >&2
+        echo "run: tn  (then ${_pb_next})" >&2
         return 1
     fi
 }
 
 _packedbox_layout_script() {
-    _pb_layout_name="$1"
-    _pb_layout_script="${PACKEDBOX_ROOT:-$HOME/.config/packedbox}/packs/terminal/tmux/bin/${_pb_layout_name}"
+    _pb_layout_script="$(_packedbox_root)/packs/terminal/tmux/bin/$1"
     if [ ! -x "$_pb_layout_script" ]; then
         echo "packedbox: missing $_pb_layout_script (run packs/terminal/install.sh)" >&2
         return 1
@@ -59,7 +67,7 @@ tn() {
 }
 
 agent_build() {
-    _packedbox_tmux_guard || return 1
+    _packedbox_tmux_guard ab || return 1
     _pb_script="$(_packedbox_layout_script agent-build-layout.sh)" || return 1
     # Default cwd to $PWD (shellyxz UX); callers may pass an explicit directory.
     _pb_dir="${PWD:-.}"
@@ -70,7 +78,7 @@ agent_build() {
                 break
                 ;;
             *)
-                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
                     _pb_dir="$1"
                     _pb_dir_set=1
                     shift
@@ -84,7 +92,7 @@ agent_build() {
 }
 
 agent_verify() {
-    _packedbox_tmux_guard || return 1
+    _packedbox_tmux_guard av || return 1
     _pb_script="$(_packedbox_layout_script agent-verify-layout.sh)" || return 1
     _pb_dir="${PWD:-.}"
     _pb_dir_set=0
@@ -106,7 +114,7 @@ agent_verify() {
                 shift
                 ;;
             *)
-                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
                     _pb_dir="$1"
                     _pb_dir_set=1
                     shift
@@ -121,19 +129,16 @@ agent_verify() {
     if [ "$_pb_generic" = 1 ]; then
         set -- "$@" --generic
     fi
-    if [ "$_pb_scan" = 1 ] && [ "$_pb_mutate" = 1 ]; then
-        AGENT_VERIFY_RESCAN=1 AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@"
-    elif [ "$_pb_scan" = 1 ]; then
-        AGENT_VERIFY_RESCAN=1 "$_pb_script" "$@"
-    elif [ "$_pb_mutate" = 1 ]; then
-        AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@"
-    else
-        "$_pb_script" "$@"
-    fi
+    case "${_pb_scan}${_pb_mutate}" in
+        11) AGENT_VERIFY_RESCAN=1 AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@" ;;
+        10) AGENT_VERIFY_RESCAN=1 "$_pb_script" "$@" ;;
+        01) AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@" ;;
+        *) "$_pb_script" "$@" ;;
+    esac
 }
 
 agent_test() {
-    _packedbox_tmux_guard || return 1
+    _packedbox_tmux_guard at || return 1
     _pb_script="$(_packedbox_layout_script agent-test-layout.sh)" || return 1
     _pb_dir="${PWD:-.}"
     _pb_dir_set=0
@@ -143,7 +148,7 @@ agent_test() {
                 break
                 ;;
             *)
-                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
                     _pb_dir="$1"
                     _pb_dir_set=1
                     shift

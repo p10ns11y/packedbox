@@ -13,19 +13,16 @@ VERIFY_OS_RELEASE="${VERIFY_OS_RELEASE:-/etc/os-release}"
 verify_os_family() {
     local id="" id_like=""
     if [ -r "$VERIFY_OS_RELEASE" ]; then
-        # Read in a subshell so ID/ID_LIKE do not leak into callers.
-        id="$(
+        # One source pass in a subshell so ID/ID_LIKE do not leak into callers.
+        # shellcheck disable=SC1090
+        {
+            IFS= read -r id
+            IFS= read -r id_like
+        } < <(
             set +u
-            # shellcheck disable=SC1090
             . "$VERIFY_OS_RELEASE"
-            printf '%s' "${ID:-}"
-        )"
-        id_like="$(
-            set +u
-            # shellcheck disable=SC1090
-            . "$VERIFY_OS_RELEASE"
-            printf '%s' "${ID_LIKE:-}"
-        )"
+            printf '%s\n%s\n' "${ID:-}" "${ID_LIKE:-}"
+        )
     fi
     case "$id" in
         arch | endeavouros | manjaro | cachyos)

@@ -85,15 +85,23 @@ if grep -qF 'tmux-workflow.sh' "$ROOT/installers/lib/packedbox-install.sh"; then
 else
     fail 'packedbox-install missing tmux-workflow.sh install'
 fi
+
+# Seed a HOME with core + stub layout bins for tmux-workflow checks.
+seed_workflow_home() {
+    local home="$1"
+    local root="$home/.config/packedbox"
+    mkdir -p "$root/core" "$root/packs/terminal/tmux/bin"
+    cp -a "$ROOT/core/." "$root/core/"
+    local s
+    for s in agent-build-layout.sh agent-verify-layout.sh agent-test-layout.sh; do
+        printf '#!/bin/sh\necho stub-%s "$@"\n' "$s" >"$root/packs/terminal/tmux/bin/$s"
+        chmod +x "$root/packs/terminal/tmux/bin/$s"
+    done
+}
+
+seed_workflow_home "$TMPHOME"
 if HOME="$TMPHOME" bash -lc '
     PACKEDBOX_ROOT="$HOME/.config/packedbox"
-    mkdir -p "$PACKEDBOX_ROOT/core" "$PACKEDBOX_ROOT/packs/terminal/tmux/bin"
-    cp -a "'"$ROOT"'/core/." "$PACKEDBOX_ROOT/core/"
-    # stub layout bins so _packedbox_layout_script succeeds on --help-style checks
-    for s in agent-build-layout.sh agent-verify-layout.sh agent-test-layout.sh; do
-        printf "#!/bin/sh\necho stub-%s \"\$@\"\n" "$s" >"$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
-        chmod +x "$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
-    done
     # shellcheck disable=SC1091
     . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
     type ab >/dev/null && type av >/dev/null && type at >/dev/null \
@@ -110,18 +118,12 @@ outside_msg="$(
     unset TMUX
     HOME="$TMPHOME" bash -c '
         PACKEDBOX_ROOT="$HOME/.config/packedbox"
-        mkdir -p "$PACKEDBOX_ROOT/core" "$PACKEDBOX_ROOT/packs/terminal/tmux/bin"
-        cp -a "'"$ROOT"'/core/." "$PACKEDBOX_ROOT/core/"
-        for s in agent-build-layout.sh agent-verify-layout.sh agent-test-layout.sh; do
-            printf "#!/bin/sh\necho stub\n" >"$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
-            chmod +x "$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
-        done
         # shellcheck disable=SC1091
         . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
         av 2>&1 || true
     '
 )"
-if printf '%s' "$outside_msg" | grep -qF 'run: tn'; then
+if printf '%s' "$outside_msg" | grep -qF 'run: tn  (then av)'; then
     ok 'av outside tmux prints tn first-run one-liner'
 else
     fail "av outside tmux missing first-run hint (got: $outside_msg)"
