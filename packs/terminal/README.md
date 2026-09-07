@@ -27,8 +27,13 @@ install.sh        # deploy pack + wire ~/.config/{ghostty,tmux,nvim}
 PACKEDBOX_THEME=eye-comfort-light ./packs/terminal/install.sh
 ```
 
-Arch one-shot: `./adapters/arch/install.sh --with-terminal`  
-Ubuntu one-shot: `./adapters/ubuntu/install.sh --with-terminal`
+One-shot per distro:
+
+```bash
+./adapters/ubuntu/install.sh --with-terminal
+./adapters/debian/install.sh --with-terminal
+./adapters/arch/install.sh --with-terminal
+```
 
 ## Usage
 

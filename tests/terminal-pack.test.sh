@@ -140,12 +140,20 @@ else
     fail 'install.sh did not wire nvim theme plugin'
 fi
 
-if grep -qF 'adapters/ubuntu/install.sh --with-terminal' "$ROOT/adapters/ubuntu/install.sh" \
-    || grep -qF '--with-terminal' "$ROOT/adapters/ubuntu/install.sh"; then
-    ok 'ubuntu adapter documents --with-terminal'
-else
-    fail 'ubuntu adapter missing --with-terminal'
-fi
+assert_with_terminal() {
+    local distro="$1" script="$ROOT/adapters/$1/install.sh"
+    if grep -qF '--with-terminal' "$script" \
+        && grep -qF 'packs/terminal/install.sh' "$script" \
+        && grep -qF 'fix-path.sh' "$script"; then
+        ok "$distro adapter advertises --with-terminal (+ pack + fix-path)"
+    else
+        fail "$distro adapter missing --with-terminal wiring"
+    fi
+}
+
+assert_with_terminal ubuntu
+assert_with_terminal debian
+assert_with_terminal arch
 
 if grep -q 'ensure_ghostty' "$ROOT/adapters/ubuntu/install.sh" \
     && grep -q 'snap install ghostty' "$ROOT/adapters/ubuntu/install.sh" \
@@ -153,6 +161,23 @@ if grep -q 'ensure_ghostty' "$ROOT/adapters/ubuntu/install.sh" \
     ok 'ubuntu adapter best-effort installs ghostty (apt/snap/deb)'
 else
     fail 'ubuntu adapter missing ghostty install path'
+fi
+
+if grep -q 'ensure_ghostty' "$ROOT/adapters/debian/install.sh" \
+    && grep -q 'snap install ghostty' "$ROOT/adapters/debian/install.sh" \
+    && grep -q 'ghostty.org/docs/install/binary' "$ROOT/adapters/debian/install.sh"; then
+    ok 'debian adapter best-effort installs ghostty (apt/snap + warn)'
+else
+    fail 'debian adapter missing ghostty install path'
+fi
+
+if grep -q 'ensure_ghostty' "$ROOT/adapters/arch/install.sh" \
+    && grep -q 'pacman -Si ghostty' "$ROOT/adapters/arch/install.sh" \
+    && grep -q 'paru -S' "$ROOT/adapters/arch/install.sh" \
+    && grep -q 'omarchy-install-terminal' "$ROOT/adapters/arch/install.sh"; then
+    ok 'arch adapter best-effort installs ghostty (pacman/paru/omarchy)'
+else
+    fail 'arch adapter missing ghostty install path'
 fi
 
 if grep -qE 'split-window .*-p ["$]' "$ROOT/packs/terminal/tmux/lib/verify-layout.sh" \
