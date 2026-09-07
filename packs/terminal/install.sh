@@ -99,23 +99,82 @@ EOF
     fi
 }
 
+wire_nvim_init() {
+    local init_lua="${HOME}/.config/nvim/init.lua"
+    local begin_marker='-- BEGIN packedbox packs/terminal'
+    local end_marker='-- END packedbox packs/terminal'
+    local block_file out
+
+    block_file="$(mktemp)"
+    cat >"$block_file" <<EOF
+$begin_marker
+-- Eye-comfort theme without a plugin manager (lazy.nvim optional).
+vim.opt.termguicolors = true
+pcall(vim.cmd.colorscheme, "packedbox")
+$end_marker
+EOF
+
+    mkdir -p "$(dirname "$init_lua")"
+    if [[ ! -f "$init_lua" ]]; then
+        cp "$block_file" "$init_lua"
+        rm -f "$block_file"
+        echo "nvim: wrote $init_lua"
+        return 0
+    fi
+
+    if grep -qF -- "$begin_marker" "$init_lua" && grep -qF -- "$end_marker" "$init_lua"; then
+        out="$(mktemp)"
+        awk -v begin="$begin_marker" -v end="$end_marker" -v bf="$block_file" '
+            $0 == begin {
+                while ((getline line < bf) > 0) print line
+                close(bf)
+                skip = 1
+                next
+            }
+            skip && $0 == end { skip = 0; next }
+            !skip { print }
+        ' "$init_lua" >"$out"
+        mv "$out" "$init_lua"
+        rm -f "$block_file"
+        echo "nvim: refreshed managed block in $init_lua"
+        return 0
+    fi
+
+    printf '\n' >>"$init_lua"
+    cat "$block_file" >>"$init_lua"
+    rm -f "$block_file"
+    echo "nvim: appended managed block to $init_lua"
+}
+
 wire_nvim() {
     local pack="$1"
     local theme="$2"
     local theme_lua="$pack/nvim/themes/$theme/neovim.lua"
-    local nvim_dir="${HOME}/.config/nvim/lua/plugins"
-    local dest="$nvim_dir/packedbox-theme.lua"
+    local colors_lua="$pack/nvim/themes/$theme/colors.lua"
+    local nvim_dir="${HOME}/.config/nvim"
+    local plugins_dir="$nvim_dir/lua/plugins"
+    local colors_dir="$nvim_dir/colors"
+    local dest_plugin="$plugins_dir/packedbox-theme.lua"
+    local dest_colors="$colors_dir/packedbox.lua"
 
     if [[ ! -f "$theme_lua" ]]; then
         echo "error: missing nvim theme: $theme_lua" >&2
         return 1
     fi
+    if [[ ! -f "$colors_lua" ]]; then
+        echo "error: missing nvim colorscheme: $colors_lua" >&2
+        return 1
+    fi
 
-    mkdir -p "$nvim_dir"
-    install -m 0644 "$theme_lua" "$dest"
+    mkdir -p "$plugins_dir" "$colors_dir"
+    # Standalone colorscheme for stock Neovim (apt/pacman, no lazy.nvim).
+    install -m 0644 "$colors_lua" "$dest_colors"
+    # LazyVim / lazy.nvim plugin spec (no-op without a plugin manager).
+    install -m 0644 "$theme_lua" "$dest_plugin"
     install -m 0644 "$pack/nvim/omarchy-theme-hotreload.lua" \
-        "${HOME}/.config/nvim/lua/packedbox-theme-hotreload.lua"
-    echo "nvim: installed $dest"
+        "$nvim_dir/lua/packedbox-theme-hotreload.lua"
+    wire_nvim_init
+    echo "nvim: installed $dest_colors (+ lazy plugin spec)"
 }
 
 main() {
@@ -138,7 +197,7 @@ main() {
             echo "  pack:    $pack"
             echo "  ghostty: ~/.config/ghostty"
             echo "  tmux:    ~/.config/tmux/verify.conf"
-            echo "  nvim:    ~/.config/nvim/lua/plugins/packedbox-theme.lua"
+            echo "  nvim:    ~/.config/nvim/colors/packedbox.lua (+ init.lua)"
             ;;
         *)
             echo "error: unknown argument: $1" >&2

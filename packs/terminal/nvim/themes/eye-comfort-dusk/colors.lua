@@ -1,0 +1,117 @@
+-- packedbox eye-comfort-dusk — standalone Neovim colorscheme (no plugin manager).
+vim.opt.termguicolors = true
+vim.o.background = "dark"
+vim.cmd("hi clear")
+if vim.fn.exists("syntax_on") == 1 then
+  vim.cmd("syntax reset")
+end
+vim.g.colors_name = "packedbox"
+
+local bg = "#322821"
+local bg1 = "#44382F"
+local fg = "#E8DED0"
+local fg_dim = "#91867A"
+local red = "#D17469"
+local green = "#81A191"
+local yellow = "#D5AB68"
+local blue = "#799194"
+local magenta = "#B59274"
+local cyan = "#82A89B"
+local orange = "#DDA55C"
+local sel = "#44382F"
+
+local function hi(group, opts)
+  vim.api.nvim_set_hl(0, group, opts)
+end
+
+hi("Normal", { fg = fg, bg = bg })
+hi("NormalFloat", { fg = fg, bg = bg1 })
+hi("NormalNC", { fg = fg, bg = bg })
+hi("Cursor", { fg = bg, bg = yellow })
+hi("CursorLine", { bg = bg1 })
+hi("CursorColumn", { bg = bg1 })
+hi("CursorLineNr", { fg = yellow, bg = bg1, bold = true })
+hi("LineNr", { fg = fg_dim, bg = bg })
+hi("SignColumn", { fg = fg_dim, bg = bg })
+hi("ColorColumn", { bg = bg1 })
+hi("Visual", { bg = sel, fg = fg })
+hi("VisualNOS", { bg = sel })
+hi("Search", { fg = bg, bg = yellow })
+hi("IncSearch", { fg = bg, bg = orange })
+hi("MatchParen", { fg = yellow, bold = true })
+hi("StatusLine", { fg = fg, bg = bg1 })
+hi("StatusLineNC", { fg = fg_dim, bg = bg1 })
+hi("TabLine", { fg = fg_dim, bg = bg1 })
+hi("TabLineFill", { bg = bg })
+hi("TabLineSel", { fg = fg, bg = bg, bold = true })
+hi("VertSplit", { fg = bg1, bg = bg })
+hi("WinSeparator", { fg = bg1, bg = bg })
+hi("Pmenu", { fg = fg, bg = bg1 })
+hi("PmenuSel", { fg = bg, bg = yellow })
+hi("PmenuSbar", { bg = bg1 })
+hi("PmenuThumb", { bg = fg_dim })
+hi("WildMenu", { fg = bg, bg = yellow })
+hi("Folded", { fg = fg_dim, bg = bg1 })
+hi("FoldColumn", { fg = fg_dim, bg = bg })
+hi("NonText", { fg = fg_dim })
+hi("SpecialKey", { fg = fg_dim })
+hi("Whitespace", { fg = fg_dim })
+hi("EndOfBuffer", { fg = bg })
+hi("Directory", { fg = blue, bold = true })
+hi("Title", { fg = yellow, bold = true })
+hi("Question", { fg = green })
+hi("MoreMsg", { fg = green })
+hi("ModeMsg", { fg = fg, bold = true })
+hi("WarningMsg", { fg = yellow })
+hi("ErrorMsg", { fg = red, bold = true })
+hi("Error", { fg = red })
+hi("Todo", { fg = bg, bg = yellow, bold = true })
+hi("Comment", { fg = fg_dim, italic = true })
+hi("Constant", { fg = magenta })
+hi("String", { fg = green })
+hi("Character", { fg = green })
+hi("Number", { fg = magenta })
+hi("Boolean", { fg = magenta })
+hi("Float", { fg = magenta })
+hi("Identifier", { fg = blue })
+hi("Function", { fg = yellow })
+hi("Statement", { fg = red })
+hi("Conditional", { fg = red })
+hi("Repeat", { fg = red })
+hi("Label", { fg = yellow })
+hi("Operator", { fg = cyan })
+hi("Keyword", { fg = red })
+hi("Exception", { fg = red })
+hi("PreProc", { fg = cyan })
+hi("Include", { fg = cyan })
+hi("Define", { fg = cyan })
+hi("Macro", { fg = cyan })
+hi("Type", { fg = yellow })
+hi("StorageClass", { fg = orange })
+hi("Structure", { fg = yellow })
+hi("Typedef", { fg = yellow })
+hi("Special", { fg = orange })
+hi("SpecialChar", { fg = orange })
+hi("Tag", { fg = red })
+hi("Delimiter", { fg = fg })
+hi("SpecialComment", { fg = fg_dim })
+hi("Underlined", { fg = blue, underline = true })
+hi("Ignore", { fg = fg_dim })
+hi("DiffAdd", { fg = green, bg = bg1 })
+hi("DiffChange", { fg = yellow, bg = bg1 })
+hi("DiffDelete", { fg = red, bg = bg1 })
+hi("DiffText", { fg = fg, bg = sel })
+hi("DiagnosticError", { fg = red })
+hi("DiagnosticWarn", { fg = yellow })
+hi("DiagnosticInfo", { fg = blue })
+hi("DiagnosticHint", { fg = cyan })
+hi("netrwDir", { fg = blue, bold = true })
+hi("netrwClassify", { fg = cyan })
+hi("netrwExe", { fg = green })
+hi("netrwSymLink", { fg = cyan })
+hi("netrwPlain", { fg = fg })
+hi("netrwVersion", { fg = fg_dim })
+hi("netrwQuickHelp", { fg = fg_dim })
+hi("netrwList", { fg = blue })
+hi("netrwHelpCmd", { fg = yellow })
+hi("netrwCmdSep", { fg = fg_dim })

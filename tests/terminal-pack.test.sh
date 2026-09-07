@@ -21,6 +21,7 @@ require_file() {
 require_file "$ROOT/packs/terminal/ghostty/fragment.conf"
 require_file "$ROOT/packs/terminal/ghostty/themes/eye-comfort-dark/ghostty.conf"
 require_file "$ROOT/packs/terminal/nvim/themes/eye-comfort-dark/neovim.lua"
+require_file "$ROOT/packs/terminal/nvim/themes/eye-comfort-dark/colors.lua"
 require_file "$ROOT/packs/terminal/tmux/conf/tmux.verify.conf.ex"
 require_file "$ROOT/packs/terminal/tmux/bin/sync-tmux-verify.sh"
 require_file "$ROOT/packs/terminal/tmux/lib/project-tests.sh"
@@ -141,9 +142,62 @@ else
     fail "layout outside tmux missing hint (got: $layout_outside)"
 fi
 if [[ -f "$TMPHOME/.config/nvim/lua/plugins/packedbox-theme.lua" ]]; then
-    ok 'install.sh wires nvim theme plugin'
+    ok 'install.sh wires nvim lazy theme plugin'
 else
-    fail 'install.sh did not wire nvim theme plugin'
+    fail 'install.sh did not wire nvim lazy theme plugin'
+fi
+if [[ -f "$TMPHOME/.config/nvim/colors/packedbox.lua" ]] \
+    && grep -qF 'colors_name = "packedbox"' "$TMPHOME/.config/nvim/colors/packedbox.lua"; then
+    ok 'install.sh wires standalone nvim colorscheme'
+else
+    fail 'install.sh did not wire standalone nvim colorscheme'
+fi
+if [[ -f "$TMPHOME/.config/nvim/init.lua" ]] \
+    && grep -qF -- 'BEGIN packedbox packs/terminal' "$TMPHOME/.config/nvim/init.lua" \
+    && grep -qF 'colorscheme' "$TMPHOME/.config/nvim/init.lua" \
+    && grep -qF 'packedbox' "$TMPHOME/.config/nvim/init.lua"; then
+    ok 'install.sh wires managed nvim init.lua block'
+else
+    fail 'install.sh did not wire managed nvim init.lua'
+fi
+
+# Idempotent: re-install must not duplicate managed markers; preserve user config.
+printf '\n-- user config kept\nvim.opt.number = true\n' >>"$TMPHOME/.config/nvim/init.lua"
+HOME="$TMPHOME" bash "$ROOT/packs/terminal/install.sh" >/dev/null
+begin_count="$(grep -cF -- 'BEGIN packedbox packs/terminal' "$TMPHOME/.config/nvim/init.lua" || true)"
+if [[ "$begin_count" -eq 1 ]] \
+    && grep -qF 'user config kept' "$TMPHOME/.config/nvim/init.lua"; then
+    ok 'nvim init.lua re-install is idempotent (keeps user lines)'
+else
+    fail "nvim init.lua re-install duplicated or clobbered (begins=$begin_count)"
+fi
+
+# Append path when init.lua already exists without markers.
+rm -f "$TMPHOME/.config/nvim/init.lua"
+printf -- '-- preexisting lazy bootstrap\nprint("user-init")\n' >"$TMPHOME/.config/nvim/init.lua"
+HOME="$TMPHOME" bash "$ROOT/packs/terminal/install.sh" >/dev/null
+if grep -qF 'preexisting lazy bootstrap' "$TMPHOME/.config/nvim/init.lua" \
+    && grep -qF -- 'BEGIN packedbox packs/terminal' "$TMPHOME/.config/nvim/init.lua"; then
+    ok 'nvim init.lua appends managed block beside existing config'
+else
+    fail 'nvim init.lua append path lost user config or markers'
+fi
+
+# Headless: stock nvim (no plugins) loads packedbox, not default/empty scheme.
+# Use a clean HOME install (prior cases left a print() in init.lua).
+THEMEHOME="$(mktemp -d)"
+HOME="$THEMEHOME" bash "$ROOT/packs/terminal/install.sh" >/dev/null
+theme_probe="$(
+    HOME="$THEMEHOME" nvim --headless \
+        -c 'lua local c=vim.api.nvim_get_hl(0,{name="Normal"}); print(vim.g.colors_name, string.format("#%06x", c.bg or 0))' \
+        -c qa 2>&1 | tr -d '\r'
+)"
+rm -rf "$THEMEHOME"
+if printf '%s\n' "$theme_probe" | grep -qF 'packedbox' \
+    && printf '%s\n' "$theme_probe" | grep -qiF '#181614'; then
+    ok 'headless nvim loads packedbox eye-comfort-dark (not stock)'
+else
+    fail "headless nvim theme probe failed (got: $theme_probe)"
 fi
 
 assert_with_terminal() {

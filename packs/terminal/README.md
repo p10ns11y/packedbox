@@ -6,7 +6,7 @@ Ghostty + tmux + Neovim terminal pack (Phase 2).
 |-----------|----------|--------|
 | Ghostty | arch-machine `modules/productivity/eye-comfort` | `fragment.conf`, `roles.json`, four theme `ghostty.conf` |
 | tmux | shellyxz `plugins/verification/` | conf examples, keymaps, layout bins/libs (paths adapted) |
-| Neovim | eye-comfort themes | four `neovim.lua` + hotreload helper |
+| Neovim | eye-comfort themes | standalone `colors.lua` + lazy `neovim.lua` + hotreload |
 
 **OUT:** wallpaper JPGs, waybar/yazi units, full eye-comfort Python stack, verification docs images, cockpit-mcp.
 
@@ -15,7 +15,7 @@ Ghostty + tmux + Neovim terminal pack (Phase 2).
 ```
 ghostty/          # fragment + themes + roles.json
 tmux/             # conf/, bin/, lib/, data/
-nvim/             # themes/ + omarchy-theme-hotreload.lua
+nvim/             # themes/<id>/{colors.lua,neovim.lua} + hotreload
 install.sh        # deploy pack + wire ~/.config/{ghostty,tmux,nvim}
 ```
 
@@ -34,6 +34,10 @@ One-shot per distro:
 ./adapters/debian/install.sh --with-terminal
 ./adapters/arch/install.sh --with-terminal
 ```
+
+Neovim gets a **standalone** `~/.config/nvim/colors/packedbox.lua` plus a managed block in `init.lua` (`colorscheme packedbox`). No lazy.nvim required — stock apt/pacman nvim is themed. The `lua/plugins/packedbox-theme.lua` lazy spec is still installed for LazyVim users and is a no-op without a plugin manager.
+
+See the theme: `nvim .` (or `nvim -c Explore`) after install — dark eye-comfort by default (`PACKEDBOX_THEME=eye-comfort-dark`).
 
 ## Usage
 
