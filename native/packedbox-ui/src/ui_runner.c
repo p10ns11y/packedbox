@@ -27,6 +27,13 @@ static void packedbox_ui_runner_finish(
 /* Starts communicate_async on the running subprocess. */
 static void packedbox_ui_runner_read_output(packedbox_ui_runner_t *runner);
 
+/* Launches argv with merged stdout/stderr pipes. */
+static void packedbox_ui_runner_launch_argv(
+    const char *const            *argv,
+    packedbox_ui_runner_done_fn   on_done,
+    gpointer                      user_data,
+    packedbox_ui_runner_t        *runner_out);
+
 void packedbox_ui_runner_start(
     const packedbox_ui_job_t     *job,
     packedbox_ui_runner_done_fn   on_done,
@@ -35,21 +42,50 @@ void packedbox_ui_runner_start(
 {
     const char *argv[PACKEDBOX_UI_RUNNER_ARGV_MAX];
     int         argc = 0;
-    GError     *error = NULL;
 
     assert(job != NULL);
+    argc = packedbox_ui_runner_build_argv(job, argv);
+    if (argc < 0) {
+        on_done("error: failed to build job argv\n", 1, user_data);
+        return;
+    }
+
+    packedbox_ui_runner_launch_argv(argv, on_done, user_data, runner_out);
+}
+
+void packedbox_ui_runner_start_argv(
+    const char *const            *argv,
+    packedbox_ui_runner_done_fn   on_done,
+    gpointer                      user_data,
+    packedbox_ui_runner_t        *runner_out)
+{
+    assert(argv != NULL);
+    packedbox_ui_runner_launch_argv(argv, on_done, user_data, runner_out);
+}
+
+void packedbox_ui_runner_cancel(packedbox_ui_runner_t *runner)
+{
+    if (runner == NULL || runner->process == NULL)
+        return;
+
+    g_subprocess_force_exit(runner->process);
+    g_clear_object(&runner->process);
+}
+
+static void packedbox_ui_runner_launch_argv(
+    const char *const            *argv,
+    packedbox_ui_runner_done_fn   on_done,
+    gpointer                      user_data,
+    packedbox_ui_runner_t        *runner_out)
+{
+    GError *error = NULL;
+
     assert(on_done != NULL);
     assert(runner_out != NULL);
 
     runner_out->on_done = on_done;
     runner_out->user_data = user_data;
     runner_out->process = NULL;
-
-    argc = packedbox_ui_runner_build_argv(job, argv);
-    if (argc < 0) {
-        on_done("error: failed to build job argv\n", 1, user_data);
-        return;
-    }
 
     runner_out->process = g_subprocess_newv(
         argv,
@@ -68,15 +104,6 @@ void packedbox_ui_runner_start(
     }
 
     packedbox_ui_runner_read_output(runner_out);
-}
-
-void packedbox_ui_runner_cancel(packedbox_ui_runner_t *runner)
-{
-    if (runner == NULL || runner->process == NULL)
-        return;
-
-    g_subprocess_force_exit(runner->process);
-    g_clear_object(&runner->process);
 }
 
 static int packedbox_ui_runner_build_argv(

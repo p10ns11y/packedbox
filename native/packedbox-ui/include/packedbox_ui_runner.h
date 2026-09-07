@@ -23,6 +23,13 @@ void packedbox_ui_runner_start(
     gpointer                      user_data,
     packedbox_ui_runner_t        *runner_out);
 
+/* Starts argv directly (e.g. packedbox status). argv must be NULL-terminated. */
+void packedbox_ui_runner_start_argv(
+    const char *const            *argv,
+    packedbox_ui_runner_done_fn   on_done,
+    gpointer                      user_data,
+    packedbox_ui_runner_t        *runner_out);
+
 /* Cancels a running subprocess if any. */
 void packedbox_ui_runner_cancel(packedbox_ui_runner_t *runner);
 

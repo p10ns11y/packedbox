@@ -42,7 +42,8 @@ else
     fail "packedbox-ui stub output: $stub_out"
 fi
 
-for script in installers/fix-path.sh core/check-path.sh packs/terminal/install.sh; do
+for script in installers/fix-path.sh core/check-path.sh packs/terminal/install.sh \
+    adapters/ubuntu/install.sh adapters/debian/install.sh adapters/arch/install.sh; do
     if [[ -f "$ROOT/$script" ]]; then
         ok "backend present: $script"
     else
