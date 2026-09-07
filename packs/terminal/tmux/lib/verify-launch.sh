@@ -49,6 +49,7 @@ verify_os_family() {
 
 # Optional install command for a missing tool (no package-manager guess for unknown).
 # lazygit: not in Ubuntu 24.04 / Debian 12 default apt — prefer go install.
+# Process monitor: Ubuntu/Debian main has htop; btop is universe-only — prefer htop hints.
 verify_optional_install_cmd() {
     local pkg="${1:?pkg}"
     local family
@@ -62,6 +63,10 @@ verify_optional_install_cmd() {
             case "$pkg" in
                 lazygit)
                     printf 'go install github.com/jesseduffield/lazygit@latest'
+                    ;;
+                btop | htop)
+                    # htop is in main; btop may be missing from minimal images — suggest htop.
+                    printf 'sudo apt install htop'
                     ;;
                 *)
                     printf 'sudo apt install %s' "$pkg"

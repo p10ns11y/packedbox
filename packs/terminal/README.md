@@ -66,6 +66,6 @@ On Cursor cloud desktops: if Ctrl-b never lights `PREFIX`, type **`av` / `ab` / 
 
 Helpers (`t` / `tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, helpers print `run: tn  (then <helper>)`.
 
-Optional pane tools use os-release install hints (Ubuntu `apt` / Arch `pacman`; lazygit on Debian/Ubuntu prefers `go install`).
+Optional pane tools use os-release install hints (Ubuntu/Debian: `htop` from apt main, lazygit via `go install`; Arch: `pacman`). Test cockpit prefers `btop`, then `htop`.
 
 Script fallbacks (same layouts): `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.

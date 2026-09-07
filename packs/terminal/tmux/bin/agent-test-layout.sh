@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test cockpit — btop (major left) + project tests (right shell pane).
+# Test cockpit — btop when available, else htop (Ubuntu main); + project tests.
 # Usage: agent-test-layout.sh [directory] [--watch] [--run]
 set -euo pipefail
 
@@ -120,9 +120,11 @@ else
 
     if command -v btop >/dev/null 2>&1; then
         test_launch_pane "${WIN}.0" 'BTOP' btop
+    elif command -v htop >/dev/null 2>&1; then
+        test_launch_pane "${WIN}.0" 'HTOP' htop
     else
-        test_launch_pane "${WIN}.0" 'BTOP' \
-            "$(verify_missing_pkg_echo btop 'btop not installed')"
+        test_launch_pane "${WIN}.0" 'HTOP' \
+            "$(verify_missing_pkg_echo htop 'htop not installed')"
     fi
 
     test_launch_pane "${WIN}.1" 'TEST' "$TEST_CMD"

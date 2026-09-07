@@ -293,8 +293,11 @@ assert_hint "$hint_tmp/os-ubuntu" lazygit \
     'go install github.com/jesseduffield/lazygit@latest' \
     'ubuntu lazygit hint uses go install (not in 24.04 apt)'
 assert_hint "$hint_tmp/os-ubuntu" btop \
-    'sudo apt install btop' \
-    'ubuntu btop hint uses apt'
+    'sudo apt install htop' \
+    'ubuntu btop/htop hint prefers htop (main)'
+assert_hint "$hint_tmp/os-ubuntu" htop \
+    'sudo apt install htop' \
+    'ubuntu htop hint uses apt'
 assert_hint "$hint_tmp/os-arch" lazygit \
     'sudo pacman -S lazygit' \
     'arch lazygit hint uses pacman (not paru)'
