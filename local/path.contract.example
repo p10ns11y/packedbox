@@ -1,0 +1,5 @@
+# Optional local PATH overlay — copy to ~/.config/packedbox/local/path.contract
+# Example personal/machine paths (applied after core/path.contract).
+
+# phase:core
+# prepend:.grok/bin

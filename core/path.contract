@@ -1,0 +1,22 @@
+# path.contract v2 — resolution order within each phase (top = highest priority)
+# Provenance: shellyxz.sh core/path.contract (adapted for packedbox)
+# Validated: path_contract_apply in core/env.sh + path_contract_verify
+# Personal/machine paths: local/path.contract (see local/path.contract.example)
+
+deny:/condabin
+deny:.local/share/../bin
+
+phase:environment
+prepend:OMARCHY_PATH/bin:omarchy
+
+phase:core
+prepend:HOME/bin
+prepend:.local/bin
+prepend:mise/shims
+prepend:.cargo/bin
+prepend:.bun/bin
+
+phase:inherit
+keep:system
+
+phase:append
