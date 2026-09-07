@@ -1,0 +1,8 @@
+# tool.contract — hybrid command pins (execution) + shadow warnings (which)
+# Applied by tool_contract_apply in core/env.sh; scanned by path_shadow_report
+# Provenance: shellyxz.sh core/tool.contract
+
+pin:clear:/usr/bin/clear
+pin:tput:/usr/bin/tput
+pin:git:/usr/bin/git
+warn_shadow:clear tput stty reset git

@@ -36,35 +36,39 @@ The first user-visible pack wires a consistent terminal workflow:
 
 Pack layout lives under `packs/terminal/`. Adapters decide how configs are installed on each distro.
 
-## Quick start (Phase 0 scaffold)
-
-Phase 0 is documentation and directory scaffold only — installers are stubs.
+## Quick start (Phase 1 — PATH kernel)
 
 ```bash
 git clone https://github.com/p10ns11y/packedbox.git
 cd packedbox
 
-# Future: curl bootstrap
-# curl -fsSL https://raw.githubusercontent.com/p10ns11y/packedbox/main/installers/install.sh | bash
+# Ubuntu bootstrap: install core + recovery helper
+./adapters/ubuntu/install.sh
 
-./installers/install.sh --help
-./installers/fix-path.sh          # safe minimal PATH when rc files break
+# Or PATH recovery only (works from bash --norc when rc files break)
+./installers/fix-path.sh --install
+~/.local/bin/packedbox-fix-path
+
+# Verify
+bash ~/.config/packedbox/core/check-path.sh
 ```
 
-## OUT list (Phase 0 — not in this repo yet)
+Full installer orchestration (`installers/install.sh --distro`) lands in a later phase.
 
-Explicit **out-of-scope** for Phase 0 (no large code melt). These stay upstream or land in later phases:
+## OUT list (not in this repo yet)
+
+Explicit **out-of-scope** items. These stay upstream or land in later phases:
 
 | Item | Stays / lands |
 |------|----------------|
-| Full shellyxz `bin/` task runner & migrate flow | shellyxz.sh → Phase 1 pull |
 | shellyxz verification plugin (`plugins/verification/`) | shellyxz.sh → `packs/terminal/` Phase 2 |
+| shellyxz full `bin/` task runner & migrate flow | shellyxz.sh — later phases |
 | arch-machine YAML profiles & `modules/*` installers | arch-machine → `adapters/arch/` Phase 2+ |
 | arch-machine `tools/archy`, `tools/groxy`, `tools/keeper` (Rust) | arch-machine — not ported; packedbox uses C/GTK instead |
 | arch-machine `.agents/`, `.grok/`, eye-comfort image assets (184+ theme files) | arch-machine — reference only until pack needs them |
 | elomaxz state machine implementation | elomaxz repo + `native/packedbox-cli` Phase 3 |
 | GTK4 UI | `native/packedbox-ui` Phase 4 |
-| Multi-distro CI matrix | Phase 1 Ubuntu PATH/recover/fix-path only |
+| Multi-distro CI matrix (Arch, Debian) | Phase 5 |
 
 ## Quality law
 

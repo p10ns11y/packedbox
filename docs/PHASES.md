@@ -2,7 +2,7 @@
 
 High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstream melt.
 
-## Phase 0 — Scaffold (current)
+## Phase 0 — Scaffold (done)
 
 | Deliverable | Status |
 |-------------|--------|
@@ -12,17 +12,17 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | `tools/harness/skills/packedbox` agent skill | Done |
 | Source repos shellyxz.sh + arch-machine **not deleted** | Policy |
 
-## Phase 1 — PATH + recover + fix-path (Ubuntu CI) **← next**
+## Phase 1 — PATH + recover + fix-path (Ubuntu CI) **← current**
 
 **Goal:** Ship the shellyxz PATH contract and recovery story on Ubuntu with CI proof.
 
-| Task | Source | Target |
-|------|--------|--------|
-| Pull PATH contract v2 | shellyxz `core/path.contract`, `core/path.sh`, `core/path-resolve.sh` | `core/` |
-| Pull recovery flow | shellyxz `bin/recover-shell.sh` | `core/recover.sh` + installer hook |
-| Implement `fix-path.sh` | ADR-0001 requirement | `installers/fix-path.sh` (functional, not stub) |
-| Ubuntu adapter bootstrap | new | `adapters/ubuntu/install.sh` |
-| CI | new | `.github/workflows/ubuntu-path.yml` — test PATH apply, recover, fix-path in container |
+| Task | Source | Target | Status |
+|------|--------|--------|--------|
+| Pull PATH contract v2 | shellyxz `core/path.contract`, `core/path.sh`, `core/path-resolve.sh` | `core/` | Done |
+| Pull recovery flow | shellyxz `bin/recover-shell.sh` | `core/recover.sh` | Done |
+| Implement `fix-path.sh` | ADR-0001 requirement | `installers/fix-path.sh` | Done |
+| Ubuntu adapter bootstrap | new | `adapters/ubuntu/install.sh` | Done |
+| CI | new | `.github/workflows/ubuntu-path.yml` | Done |
 
 **Exit criteria**
 

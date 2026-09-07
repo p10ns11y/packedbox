@@ -1,0 +1,47 @@
+name: ubuntu-path
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'core/**'
+      - 'installers/**'
+      - 'adapters/ubuntu/**'
+      - 'tests/**'
+      - 'environments/**'
+      - '.github/workflows/ubuntu-path.yml'
+  pull_request:
+    paths:
+      - 'core/**'
+      - 'installers/**'
+      - 'adapters/ubuntu/**'
+      - 'tests/**'
+      - 'environments/**'
+      - '.github/workflows/ubuntu-path.yml'
+
+jobs:
+  path-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install shellcheck
+        run: sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq shellcheck
+
+      - name: Shellcheck core and installers
+        run: |
+          find core installers/lib -name '*.sh' -print0 | xargs -0 shellcheck -x -S warning -e SC1090,SC1091
+          shellcheck -x -S warning installers/fix-path.sh adapters/ubuntu/install.sh
+
+      - name: Run path-contract tests
+        run: bash tests/path-contract.test.sh
+
+      - name: Run fix-path tests (bash --norc)
+        run: bash tests/fix-path.test.sh
+
+      - name: Run recover tests
+        run: bash tests/recover.test.sh
+
+      - name: Ubuntu adapter bootstrap smoke
+        run: bash adapters/ubuntu/install.sh --deps-only

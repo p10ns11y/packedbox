@@ -2,11 +2,17 @@
 
 Distro-agnostic shell kernel for packedbox.
 
-Pulled selectively from [shellyxz.sh](https://github.com/p10ns11y/shellyxz.sh) `core/` in Phase 1:
+Pulled from [shellyxz.sh](https://github.com/p10ns11y/shellyxz.sh) `core/` in Phase 1:
 
-- `path.contract` — PATH resolution phases
-- `path.sh`, `path-resolve.sh` — apply + verify
-- `env.sh`, `lib.sh` — loader glue
-- Recovery helpers (from `bin/recover-shell.sh`)
+| File | Role |
+|------|------|
+| `path.contract` | PATH resolution phases (v2) |
+| `path.sh`, `path-resolve.sh` | Apply, verify, dedupe |
+| `env.sh`, `lib.sh` | Loader glue |
+| `tool.contract` | Command pins + shadow warnings |
+| `recover.sh` | Recovery when rc files break |
+| `check-path.sh` | PATH contract verification |
+
+Installed to `~/.config/packedbox/` by `installers/fix-path.sh --install` or `adapters/ubuntu/install.sh`.
 
 Adapters in `adapters/*/` call into this layer; they do not fork PATH logic.
