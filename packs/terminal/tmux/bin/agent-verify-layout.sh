@@ -66,12 +66,19 @@ else
             "$(verify_missing_pkg_echo lazygit 'install lazygit')"
     fi
 
-    verify_launch_pane 'verify.1' monitor 'BUILD' "$DIR" ''
+    # Editor pane — eye-comfort nvim (read/explore only; no illicit shell).
+    if command -v nvim >/dev/null 2>&1; then
+        verify_launch_pane 'verify.1' monitor 'NVIM' "$DIR" "nvim $(printf '%q' "$DIR")"
+    else
+        verify_launch_pane 'verify.1' monitor 'NVIM' "$DIR" \
+            "echo 'nvim not installed (optional: sudo apt install neovim)'"
+    fi
+
     verify_launch_pane 'verify.2' monitor 'WATCH' "$DIR" ''
     verify_launch_pane 'verify.3' monitor 'CMD' "$DIR" ''
 
     tmux display-message -d 4000 \
-        'Generic verify layout — add .agents/verification/tmux-layout.sh (verification-cockpit skill)'
+        'Verify: GIT | NVIM | WATCH | CMD — illicit cmds blocked; prefer av/at allowlisted tests'
 
     tmux select-pane -t 'verify.3'
 fi

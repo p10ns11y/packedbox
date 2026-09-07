@@ -317,5 +317,32 @@ else
     fail "ubuntu verify pane echo wrong (got: $ubuntu_echo)"
 fi
 
+require_file "$ROOT/packs/terminal/tmux/lib/verify-cmd-guard.sh"
+if bash "$ROOT/packs/terminal/tmux/lib/verify-cmd-guard.sh" 'sudo rm -rf /' >/dev/null 2>&1; then
+    fail 'verify-cmd-guard allowed sudo rm -rf /'
+else
+    ok 'verify-cmd-guard blocks sudo rm -rf /'
+fi
+if bash "$ROOT/packs/terminal/tmux/lib/verify-cmd-guard.sh" 'bash tests/path-contract.test.sh' >/dev/null 2>&1; then
+    ok 'verify-cmd-guard allows allowlisted test command'
+else
+    fail 'verify-cmd-guard blocked allowlisted test command'
+fi
+if grep -qF "monitor 'NVIM'" "$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh"; then
+    ok 'av generic layout launches NVIM pane'
+else
+    fail 'av generic layout missing NVIM pane'
+fi
+if [[ -x "$ROOT/.agents/verification/tmux-layout.sh" ]]; then
+    ok 'project .agents/verification/tmux-layout.sh present'
+else
+    fail 'project verification tmux-layout.sh missing or not executable'
+fi
+if [[ -f "$ROOT/.cursor/skills/verify-packedbox/SKILL.md" ]]; then
+    ok 'verify-packedbox skill present'
+else
+    fail 'verify-packedbox skill missing'
+fi
+
 echo "=== $FAIL failure(s) ==="
 [[ "$FAIL" -eq 0 ]]
