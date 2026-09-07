@@ -49,7 +49,7 @@ cd packedbox
 # Ubuntu bootstrap: install core + recovery helper
 ./adapters/ubuntu/install.sh
 
-# Ubuntu + terminal pack (tmux/neovim apt deps + Ghostty/tmux/nvim configs)
+# Ubuntu + terminal pack (tmux/neovim + best-effort Ghostty + configs)
 ./adapters/ubuntu/install.sh --with-terminal
 
 # Or PATH recovery only (works from bash --norc when rc files break)

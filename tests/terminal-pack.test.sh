@@ -76,6 +76,14 @@ else
     fail 'ubuntu adapter missing --with-terminal'
 fi
 
+if grep -q 'ensure_ghostty' "$ROOT/adapters/ubuntu/install.sh" \
+    && grep -q 'snap install ghostty' "$ROOT/adapters/ubuntu/install.sh" \
+    && grep -q 'mkasberg/ghostty-ubuntu' "$ROOT/adapters/ubuntu/install.sh"; then
+    ok 'ubuntu adapter best-effort installs ghostty (apt/snap/deb)'
+else
+    fail 'ubuntu adapter missing ghostty install path'
+fi
+
 if grep -qE 'split-window .*-p ["$]' "$ROOT/packs/terminal/tmux/lib/verify-layout.sh" \
     "$ROOT/packs/terminal/tmux/bin/agent-test-layout.sh" 2>/dev/null; then
     fail 'tmux splits still use deprecated -p (breaks Ubuntu tmux 3.4)'
