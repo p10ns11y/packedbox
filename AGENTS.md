@@ -1,6 +1,8 @@
 # packedbox — agent notes
 
-Portable Linux bootstrap (Arch ± Omarchy, Debian, Ubuntu): PATH contract, terminal pack, C CLI + thin GTK UI. Melts ideas from `shellyxz.sh` and `arch-machine`; those repos stay alive.
+Portable Linux bootstrap for **Arch** (± Omarchy), **Debian**, and **Ubuntu**: shared PATH contract, terminal pack (Ghostty + tmux + Neovim), and a thin native control plane (C CLI + GTK UI). Melts ideas from `shellyxz.sh` and `arch-machine`; those repos stay alive.
+
+**Owner:** Steward (machines / UI). **Navigating** ([kanithanj.ai](https://kanithanj.ai)) is a separate product — not this repo.
 
 ## Build / test / lint
 
@@ -44,6 +46,14 @@ Foreign elomaxz `Model`/`Msg` void* ABI: document deviations at the call site in
 2. **`fix-path.sh` is a product surface** — PATH bricks are expected; recovery is not optional tooling.
 3. **Upstream repos are not deleted** — selective pull with inventory rows, never a wholesale copy.
 
+## Agent harness
+
+| Path | Purpose |
+|------|---------|
+| `tools/harness/skills/packedbox/SKILL.md` | Canonical packedbox skill |
+| `.cursor/skills/packedbox` | Symlink → `tools/harness/skills/packedbox` (Cursor discovery) |
+| `skills-lock.json` | Pinned skill manifest (aligns with collab-finder / devprofile) |
+
 ## Docs map
 
-Capability docs: `README.md`, `docs/ADR-0001-tech-stack.md`, `docs/PHASES.md`, `docs/PULL-INVENTORY.md`. Per-tree purpose: directory `README.md` files. Harness skill: `tools/harness/skills/packedbox/SKILL.md`.
+Capability docs: `README.md`, `docs/ADR-0001-tech-stack.md`, `docs/PHASES.md`, `docs/PULL-INVENTORY.md`. Per-tree purpose: directory `README.md` files.

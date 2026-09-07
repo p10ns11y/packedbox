@@ -4,6 +4,8 @@ Agent harness for packedbox development — skills, verification templates, and 
 
 | Path | Purpose |
 |------|---------|
-| `skills/packedbox/` | Cursor/agent skill for Phase-aware work on this repo |
+| `skills/packedbox/` | Canonical packedbox agent skill |
+| `../.cursor/skills/packedbox` | Symlink for Cursor discovery |
+| `../../skills-lock.json` | Pinned skill manifest |
 
 Upstream inspiration: arch-machine `.agents/skills/` and shellyxz `.agents/verification/`.
