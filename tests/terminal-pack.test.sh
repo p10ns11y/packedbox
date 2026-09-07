@@ -69,6 +69,12 @@ if grep -qF 'set -g prefix C-b' "$TMPHOME/.config/tmux/verify.conf" \
 else
     fail 'verify.conf missing explicit prefix / prefix2'
 fi
+if grep -qF "C-b" "$ROOT/packs/terminal/tmux/lib/tmux-status-mode.sh" \
+    && grep -qF '#{?client_prefix,PREFIX' "$ROOT/packs/terminal/tmux/lib/tmux-status-mode.sh"; then
+    ok 'status-mode shows C-b hint and PREFIX latch'
+else
+    fail 'status-mode missing C-b / PREFIX segments'
+fi
 if grep -qE '^bind q source-file' "$TMPHOME/.config/tmux/verify.conf"; then
     ok 'verify.conf binds Prefix+q to reload tmux.conf'
 else

@@ -9,8 +9,10 @@ readonly TMUX_STATUS_RIGHT_LENGTH=120
 # Style OUTSIDE #{?...} branches — nested #[...] inside conditionals breaks when set via CLI
 # (shows literal "bold]" and prints every label). Omarchy uses the same pattern.
 tmux_status_mode_segments() {
+    # Always show C-b so cloud-desktop users know the real prefix (not Ctrl-Space-only).
+    # PREFIX lights when the key was received; if it never lights, type av/ab/at instead.
     printf '%s' \
-        '#[fg=colour214,bold]' \
+        '#[fg=colour240]C-b #[fg=colour214,bold]' \
         '#{?client_prefix,PREFIX ,}' \
         '#{?pane_in_mode,COPY ,}' \
         '#{?#{==:#{@editor_mode},insert},INSERT ,}' \

@@ -37,7 +37,9 @@ tn
 cd /path/to/project && av
 ```
 
-Prefer `t` / `tn` so Cursor’s `/exec-daemon/tmux` is not nested. Full keys, helpers, and distro install hints: [packs/terminal/README.md](../../packs/terminal/README.md).
+Prefer `t` / `tn` so Cursor’s `/exec-daemon/tmux` is not nested. Confirm the status bar shows `[packedbox]` and dim `C-b` — otherwise you are not in tmux and Prefix cannot work.
+
+**Prefix chords are optional here.** Ctrl-b works when the cloud viewer delivers it (`PREFIX` flashes). Ctrl-Space often does not. If neither lights `PREFIX`, type `av` / `ab` / `at` (no Prefix). Full keys and helpers: [packs/terminal/README.md](../../packs/terminal/README.md).
 
 ### Cloud / new machines
 

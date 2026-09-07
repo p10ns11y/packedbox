@@ -48,13 +48,17 @@ t ls                                    # packedbox tmux wrapper (≡ pb_tmux)
 
 Cheat sheet: `t` · `tn` · `av`. Re-attach: `tn` (or `t attach -t packedbox`).
 
-Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require that session:
+You must be **inside** the `packedbox` tmux session (status bar shows `[packedbox]` and a dim `C-b`). A bare Ghostty/xfce shell has no Prefix.
+
+Prefix = **Ctrl-b** (status shows `C-b`; `PREFIX` lights when the key arrives). **Ctrl-Space** is optional `prefix2` (often swallowed by browser/IME on cloud desktops).
 
 | Key / command | Layout |
 |---------------|--------|
-| `Prefix+V` or `av` | verify cockpit |
-| `Prefix+B` or `ab` | agent build |
-| `Prefix+T` or `at` | test cockpit |
+| `av` or `Prefix+V` (Shift+v) | verify cockpit |
+| `ab` or `Prefix+B` (Shift+b) | agent build |
+| `at` or `Prefix+T` (Shift+t) | test cockpit |
+
+On Cursor cloud desktops: if Ctrl-b never lights `PREFIX`, type **`av` / `ab` / `at`** — that is the supported path when the remote viewer eats chords.
 
 Helpers (`t` / `tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, helpers print `run: tn  (then <helper>)`.
 

@@ -7,12 +7,16 @@
 #   then inside tmux: Prefix+q  (Ctrl-b, then q — or Ctrl-Space, then q)
 #
 # PREFIX (Ubuntu / default packedbox):
-#   prefix  = Ctrl-b     (always; usable on cloud desktops and plain terminals)
-#   prefix2 = Ctrl-Space (Omarchy-friendly optional second prefix)
-# Prefer: /usr/bin/tmux -f ~/.config/tmux/tmux.conf
-#   (or: pb_tmux) so Cursor /exec-daemon/tmux is not used by mistake.
+#   prefix  = Ctrl-b     (always — status-right shows "C-b"; PREFIX lights when received)
+#   prefix2 = Ctrl-Space (Omarchy-friendly optional second prefix; often eaten by browsers/IME)
+# Prefer: tn  (or: /usr/bin/tmux -f ~/.config/tmux/tmux.conf) so Cursor /exec-daemon/tmux
+#   is not nested by mistake. You must see a tmux status bar ([packedbox] …) — bare
+#   Ghostty/xfce4-terminal shells have no Prefix.
 #
-# WORKFLOW KEYS — SHIFTED letters (match shell aliases ab / av / at):
+# CLOUD DESKTOP: if Ctrl-b never lights PREFIX in the status bar, the remote viewer is
+# swallowing the chord. Supported path then: type  av / ab / at  (no Prefix needed).
+#
+# WORKFLOW KEYS — SHIFTED letters (match shell helpers ab / av / at):
 #   Prefix+B   agent build   — Shift+b  (lowercase b is NOT bound here)
 #   Prefix+V   verify cockpit — Shift+v  (lowercase v = vertical split, unchanged)
 #   Prefix+T   test cockpit   — Shift+t
