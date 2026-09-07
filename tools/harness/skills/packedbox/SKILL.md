@@ -47,7 +47,8 @@ AGENTS.md                 # build/test + C law
 ### Phase 1.5 (native C baseline)
 
 - [x] write-legible-c CLI/UI stubs + `AGENTS.md`
-- [x] `tests/cli-smoke.test.sh` + native-c workflow
+- [x] `tests/cli-smoke.test.sh`
+- [ ] Publish `.github/workflows/native-c.yml` (needs `workflow` token scope)
 - [ ] Phase 3 elomaxz FetchContent (not started)
 
 ## References
