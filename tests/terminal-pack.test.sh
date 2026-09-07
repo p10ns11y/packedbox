@@ -7,7 +7,7 @@ FAIL=0
 TMPHOME="$(mktemp -d)"
 trap 'rm -rf "$TMPHOME"' EXIT
 
-fail() { printf 'FAIL %s\n' "$1" >&2; FAIL=$((FAIL + 1)); }
+fail() { printf 'FAIL %s\n' "$1" >&2; printf 'FAIL %s\n' "$1"; FAIL=$((FAIL + 1)); }
 ok() { printf 'ok   %s\n' "$1"; }
 
 require_file() {
@@ -135,7 +135,10 @@ if printf '%s' "$outside_msg" | grep -qF 'run: tn  (then av)'; then
 else
     fail "av outside tmux missing first-run hint (got: $outside_msg)"
 fi
-layout_outside="$("$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh" 2>&1 || true)"
+layout_outside="$(
+    unset TMUX
+    "$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh" 2>&1 || true
+)"
 if printf '%s' "$layout_outside" | grep -qF 'run: tn'; then
     ok 'agent-verify-layout outside tmux prints tn one-liner'
 else
