@@ -104,6 +104,34 @@ if HOME="$TMPHOME" bash -lc '
 else
     fail 'ab/av/at/t/tn helpers did not load'
 fi
+
+# Outside-tmux guard: clear first-run one-liner (not opaque "must run inside tmux").
+outside_msg="$(
+    unset TMUX
+    HOME="$TMPHOME" bash -c '
+        PACKEDBOX_ROOT="$HOME/.config/packedbox"
+        mkdir -p "$PACKEDBOX_ROOT/core" "$PACKEDBOX_ROOT/packs/terminal/tmux/bin"
+        cp -a "'"$ROOT"'/core/." "$PACKEDBOX_ROOT/core/"
+        for s in agent-build-layout.sh agent-verify-layout.sh agent-test-layout.sh; do
+            printf "#!/bin/sh\necho stub\n" >"$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
+            chmod +x "$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
+        done
+        # shellcheck disable=SC1091
+        . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
+        av 2>&1 || true
+    '
+)"
+if printf '%s' "$outside_msg" | grep -qF 'run: tn'; then
+    ok 'av outside tmux prints tn first-run one-liner'
+else
+    fail "av outside tmux missing first-run hint (got: $outside_msg)"
+fi
+layout_outside="$("$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh" 2>&1 || true)"
+if printf '%s' "$layout_outside" | grep -qF 'run: tn'; then
+    ok 'agent-verify-layout outside tmux prints tn one-liner'
+else
+    fail "layout outside tmux missing hint (got: $layout_outside)"
+fi
 if [[ -f "$TMPHOME/.config/nvim/lua/plugins/packedbox-theme.lua" ]]; then
     ok 'install.sh wires nvim theme plugin'
 else
