@@ -1,0 +1,16 @@
+# Build
+build/
+cmake-build-*/
+*.o
+*.a
+*.so
+
+# Native
+native/packedbox-cli/packedbox
+native/packedbox-ui/packedbox-ui
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
