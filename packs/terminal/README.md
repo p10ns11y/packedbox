@@ -32,15 +32,17 @@ Ubuntu one-shot: `./adapters/ubuntu/install.sh --with-terminal`
 
 ## Usage
 
-Prefer **Ghostty** when available (`ghostty`). Start tmux:
+Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s`):
 
 ```bash
-/usr/bin/tmux -f ~/.config/tmux/tmux.conf
-# or (after env loads):
-pb_tmux new -s packedbox
+source ~/.config/packedbox/core/env.sh   # or a new bash login shell
+tn                                      # ≡ pb_tmux new -s packedbox (attach if exists)
+cd /path/to/project && av               # verify; or at / ab
 ```
 
-Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require an active tmux session:
+Re-attach: `tn` (or `pb attach -t packedbox`).
+
+Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require that session:
 
 | Key / command | Layout |
 |---------------|--------|
@@ -48,6 +50,8 @@ Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require an active
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
 
-Helpers (`av` / `ab` / `at` / `pb_tmux`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh` — use a new shell after install, or `source ~/.config/packedbox/core/env.sh`.
+Helpers (`tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, `av` prints: `run: tn  (then av)`.
+
+Optional pane tools use os-release install hints (Ubuntu `apt` / Arch `pacman`; lazygit on Debian/Ubuntu prefers `go install`).
 
 Script fallbacks (same layouts): `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.

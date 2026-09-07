@@ -72,21 +72,25 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 ./adapters/arch/install.sh --with-terminal
 ```
 
-Prefer **Ghostty** when available (`ghostty`). Start tmux with the packedbox conf (prefer distro `/usr/bin/tmux` on Cursor clouds):
+Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s` — that flag does not create a session):
 
 ```bash
-/usr/bin/tmux -f ~/.config/tmux/tmux.conf
-# or after env loads:
-pb_tmux new -s packedbox
+source ~/.config/packedbox/core/env.sh   # or open a new bash login shell
+tn                                      # ≡ pb_tmux new -s packedbox (attach if exists)
+cd /path/to/project && av               # verify cockpit; or: at / ab
 ```
 
-Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts must run **inside** a tmux session — either Prefix binds or shellyxz-style helpers after `source ~/.config/packedbox/core/env.sh` (or a new shell):
+Re-attach later: `tn` (or `pb attach -t packedbox`).
+
+Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts must run **inside** that session:
 
 | Key / command | Layout |
 |---------------|--------|
 | `Prefix+V` or `av` | verify cockpit |
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
+
+Optional tools (lazygit / btop) print **distro-aware** install hints (Ubuntu: `apt` / `go install`; Arch: `pacman`).
 
 Script fallbacks: `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
 

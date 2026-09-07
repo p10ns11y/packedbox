@@ -31,21 +31,25 @@ Prefer **Ghostty** when the binary is installed (`ghostty`).
 
 ### tmux on cloud desktops
 
-Prefer the distro binary so Cursor’s `/exec-daemon/tmux` is not nested by mistake:
+Not `tmux -s` — that does not create a session. First attach:
 
 ```bash
-/usr/bin/tmux -f ~/.config/tmux/tmux.conf
-# or after env loads (helpers from core/tmux-workflow.sh):
-pb_tmux new -s packedbox
+source ~/.config/packedbox/core/env.sh   # or a new bash login shell
+tn                                      # ≡ pb_tmux new -s packedbox (attach if exists)
+cd /path/to/project && av               # then: at / ab as needed
 ```
 
-Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts must run **inside** tmux — Prefix binds or shellyxz-style helpers after `source ~/.config/packedbox/core/env.sh` (or a new shell):
+Re-attach: `tn` (or `pb attach -t packedbox`). Prefer `tn` / `pb_tmux` so Cursor’s `/exec-daemon/tmux` is not nested.
+
+Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts must run **inside** that session:
 
 | Key / command | Layout |
 |---------------|--------|
 | `Prefix+V` or `av` | verify cockpit |
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
+
+Missing optional panes (lazygit / btop) hint `sudo apt install …` on Ubuntu (not Arch `pacman`).
 
 Script fallbacks: `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
 

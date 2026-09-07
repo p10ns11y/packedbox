@@ -49,23 +49,23 @@ else
 fi
 
 if grep -qF 'tmux-workflow.sh' "$TEST_HOME/.config/packedbox/core/env.sh" \
-    && grep -qE '^ab\(\)|^av\(\)|^at\(\)' "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh"; then
-    ok 'installed env.sh sources tmux-workflow with ab/av/at'
+    && grep -qE '^ab\(\)|^av\(\)|^at\(\)|^tn\(\)' "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh"; then
+    ok 'installed env.sh sources tmux-workflow with ab/av/at/tn'
 else
-    fail 'installed env/tmux-workflow missing ab/av/at wiring'
+    fail 'installed env/tmux-workflow missing ab/av/at/tn wiring'
 fi
 
-# Fresh shell with bashrc managed block must define ab / av / at (functions).
+# Fresh shell with bashrc managed block must define ab / av / at / tn (functions).
 # Ubuntu login shells source ~/.bashrc via ~/.profile — seed a minimal profile.
 printf '%s\n' \
     'if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi' \
     >"$TEST_HOME/.profile"
 if HOME="$TEST_HOME" bash -lc '
-    type ab >/dev/null && type av >/dev/null && type at >/dev/null
+    type ab >/dev/null && type av >/dev/null && type at >/dev/null && type tn >/dev/null
 '; then
-    ok 'bashrc-managed shell defines ab/av/at'
+    ok 'bashrc-managed shell defines ab/av/at/tn'
 else
-    fail 'bashrc-managed shell missing ab/av/at'
+    fail 'bashrc-managed shell missing ab/av/at/tn'
 fi
 
 if [[ ! -x "$TEST_HOME/.local/bin/packedbox-fix-path" ]]; then

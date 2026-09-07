@@ -32,7 +32,7 @@ if ! command -v tmux >/dev/null 2>&1; then
 fi
 
 if [ -z "${TMUX:-}" ]; then
-    echo "$SCRIPT_NAME: must run inside tmux" >&2
+    echo "run: tn  (then av)" >&2
     exit 1
 fi
 

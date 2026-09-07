@@ -98,11 +98,11 @@ if HOME="$TMPHOME" bash -lc '
     . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
     type ab >/dev/null && type av >/dev/null && type at >/dev/null \
         && type agent_build >/dev/null && type agent_verify >/dev/null && type agent_test >/dev/null \
-        && type pb_tmux >/dev/null
+        && type pb_tmux >/dev/null && type tn >/dev/null && type pb >/dev/null
 '; then
-    ok 'ab/av/at and pb_tmux helpers load from tmux-workflow.sh'
+    ok 'ab/av/at/tn/pb and pb_tmux helpers load from tmux-workflow.sh'
 else
-    fail 'ab/av/at helpers did not load'
+    fail 'ab/av/at/tn helpers did not load'
 fi
 if [[ -f "$TMPHOME/.config/nvim/lua/plugins/packedbox-theme.lua" ]]; then
     ok 'install.sh wires nvim theme plugin'

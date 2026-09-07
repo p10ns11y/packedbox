@@ -5,8 +5,8 @@
 
 _packedbox_tmux_guard() {
     if [ -z "${TMUX:-}" ]; then
-        echo "Start tmux first: /usr/bin/tmux -f ~/.config/tmux/tmux.conf" >&2
-        echo "  (or: pb_tmux new -s packedbox)" >&2
+        # One-liner first — opaque "not in tmux" confuses first-run cloud desktops.
+        echo "run: tn  (then av)" >&2
         return 1
     fi
 }
@@ -30,13 +30,30 @@ packedbox_tmux() {
     fi
 }
 
-# Attach-or-create with packedbox verify.conf (cloud-desktop safe launch path).
+# Always load packedbox conf via /usr/bin/tmux (avoids Cursor /exec-daemon/tmux).
+# Not `tmux -s` — that flag does not create a session. Prefer: tn
 pb_tmux() {
     _pb_tmux_conf="${HOME}/.config/tmux/tmux.conf"
     if [ -f "$_pb_tmux_conf" ]; then
         packedbox_tmux -f "$_pb_tmux_conf" "$@"
     else
         packedbox_tmux "$@"
+    fi
+}
+
+# Short alias for pb_tmux (e.g. pb attach -t packedbox).
+pb() { pb_tmux "$@"; }
+
+# tn — new packedbox session (default name: packedbox). Attach if it already exists.
+tn() {
+    _pb_tn_name="${1:-packedbox}"
+    if [ $# -gt 0 ]; then
+        shift
+    fi
+    if pb_tmux has-session -t "$_pb_tn_name" 2>/dev/null; then
+        pb_tmux attach-session -t "$_pb_tn_name"
+    else
+        pb_tmux new-session -s "$_pb_tn_name" "$@"
     fi
 }
 
