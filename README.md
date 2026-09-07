@@ -49,6 +49,9 @@ cd packedbox
 # Ubuntu bootstrap: install core + recovery helper
 ./adapters/ubuntu/install.sh
 
+# Ubuntu + terminal pack (tmux/neovim apt deps + Ghostty/tmux/nvim configs)
+./adapters/ubuntu/install.sh --with-terminal
+
 # Or PATH recovery only (works from bash --norc when rc files break)
 ./installers/fix-path.sh --install
 ~/.local/bin/packedbox-fix-path
@@ -63,6 +66,8 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 
 ```bash
 ./packs/terminal/install.sh
+# or one-shot:
+./adapters/ubuntu/install.sh --with-terminal
 # or on Arch:
 ./adapters/arch/install.sh --with-terminal
 ```

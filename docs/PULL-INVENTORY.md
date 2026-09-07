@@ -781,7 +781,10 @@ Selective copies only. Upstream repos unchanged.
 | `data/tmux-keymaps.tsv` | `tmux/data/` |
 | layout bins (`sync-tmux-verify`, `agent-*-layout`, `tmux-*`, `verify-pane-launch`) | `tmux/bin/` |
 | `lib/verify-{layout,launch}.sh`, `lib/tmux-status-mode.sh` | `tmux/lib/` |
+| `lib/project-tests.sh` (minimal stub only) | `tmux/lib/project-tests.sh` |
 
 **Adapted:** managed marker + default paths → `~/.config/packedbox/packs/terminal/tmux`.
 
-**Not pulled:** `docs/*.jpg`, cockpit-mcp, full test-discovery/`parse-project-tests` stack.
+**Stubbed (not full pull):** `lib/project-tests.sh` — Phase 2 minimal `project_test_cmd` resolver so `agent-test-layout.sh` can source it. Detects `bin/run-project-tests.sh`, common language runners, or packedbox `tests/*.test.sh`; no allowlist / discovery / parse stack.
+
+**Not pulled:** `docs/*.jpg`, cockpit-mcp, full test-discovery/`parse-project-tests` stack (`parse-project-tests*.{sh,py}`, `discover-tests.sh`, `test-allowlist.sh`, `project-build.sh`).

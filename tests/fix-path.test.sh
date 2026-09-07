@@ -48,6 +48,17 @@ else
     ok 'fix-path --install registers packedbox-fix-path symlink'
 fi
 
+# Symlink must resolve SCRIPT_DIR through the link (recovery entrypoint).
+symlink_out=$(bash --norc "$TEST_HOME/.local/bin/packedbox-fix-path" 2>&1) || {
+    fail 'packedbox-fix-path symlink invocation failed'
+    printf '%s\n' "$symlink_out" >&2
+}
+if [[ "$symlink_out" == *"PATH contract applied"* ]]; then
+    ok 'packedbox-fix-path symlink applies PATH contract'
+else
+    fail "packedbox-fix-path symlink did not apply contract: $symlink_out"
+fi
+
 if ! grep -qF '# packedbox managed block begin' "$TEST_HOME/.bashrc" 2>/dev/null; then
     fail 'bashrc managed block not written'
 else

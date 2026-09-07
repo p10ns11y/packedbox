@@ -3,7 +3,7 @@
 # Managed by packedbox packs/terminal
 #
 # INSTALL / REFRESH (not sourced in zsh — tmux loads this file):
-#   ~/.config/shell/bin/sync-tmux-verify.sh
+#   ~/.config/packedbox/packs/terminal/tmux/bin/sync-tmux-verify.sh
 #   then inside tmux: Prefix+q  (Ctrl+Space, then q)
 #
 # Omarchy prefix = Ctrl+Space (prefix2 = Ctrl+b).
@@ -29,20 +29,20 @@ set -g @workflow_mode ''
 source-file ~/.config/packedbox/packs/terminal/tmux/conf/tmux.status-mode.conf.ex
 
 # Keymap helper — Prefix+? or click status-right
-bind ? run-shell '~/.config/shell/bin/tmux-keymap-menu.sh'
-bind -n MouseDown1StatusRight run-shell '~/.config/shell/bin/tmux-keymap-menu.sh'
+bind ? run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-keymap-menu.sh'
+bind -n MouseDown1StatusRight run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-keymap-menu.sh'
 
 # Zoom active pane (Prefix+Z) — ad-hoc full width inside any window
 bind Z resize-pane -Z
 
 # Cycle layouts (Prefix+Space) — golden φ on verify window, tmux next-layout elsewhere
-bind Space run-shell '~/.config/shell/bin/tmux-cycle-layout.sh'
+bind Space run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-cycle-layout.sh'
 
 # Agent build (Prefix+B) — ab / agent_build
-bind B run-shell '~/.config/shell/bin/agent-build-layout.sh "#{pane_current_path}"'
+bind B run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-build-layout.sh "#{pane_current_path}"'
 
 # Verification cockpit (Prefix+V) — av / agent_verify
-bind V run-shell '~/.config/shell/bin/agent-verify-layout.sh "#{pane_current_path}"'
+bind V run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-verify-layout.sh "#{pane_current_path}"'
 
 # Test cockpit (Prefix+T) — at / agent_test
-bind T run-shell '~/.config/shell/bin/agent-test-layout.sh "#{pane_current_path}"'
+bind T run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-test-layout.sh "#{pane_current_path}"'

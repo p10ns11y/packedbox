@@ -114,7 +114,7 @@ else
     fi
     tmux new-window -n test -c "$DIR"
     tmux set-window-option -t "$WIN" pane-base-index 0
-    tmux split-window -h -t "$WIN" -c "$DIR" -p "$LAYOUT_PHI_MINOR"
+    tmux split-window -h -t "$WIN" -c "$DIR" -l "${LAYOUT_PHI_MINOR}%"
 
     w="$(tmux display-message -p -t "$WIN" '#{window_width}')"
     tmux resize-pane -t "${WIN}.0" -x $((w * LAYOUT_PHI_MAJOR / 100))

@@ -72,10 +72,31 @@ EOF
 
 wire_tmux() {
     local pack="$1"
+    local tmux_dir="${HOME}/.config/tmux"
+    local tmux_conf="$tmux_dir/tmux.conf"
+    local marker='# Managed by packedbox packs/terminal'
+
     bash "$pack/tmux/bin/sync-tmux-verify.sh" || {
         echo "warn: sync-tmux-verify.sh did not install (existing unmanaged verify.conf?)" >&2
         return 0
     }
+
+    mkdir -p "$tmux_dir"
+    if [[ ! -f "$tmux_conf" ]]; then
+        cat >"$tmux_conf" <<EOF
+$marker
+source-file ~/.config/tmux/verify.conf
+EOF
+        echo "tmux: wrote $tmux_conf"
+        return 0
+    fi
+
+    if ! grep -qF 'source-file ~/.config/tmux/verify.conf' "$tmux_conf"; then
+        printf '\n%s\nsource-file ~/.config/tmux/verify.conf\n' "$marker" >>"$tmux_conf"
+        echo "tmux: ensured verify.conf include in $tmux_conf"
+    else
+        echo "tmux: verify.conf already sourced from $tmux_conf"
+    fi
 }
 
 wire_nvim() {

@@ -161,8 +161,8 @@ verify_apply_theme() {
     local session="${1:?session}"
     local project="${2:-}"
     local risk="${3:-medium}"
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}"
-    local soc_ex="${shell_root}/tmux.verify-soc-theme.conf.ex"
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}"
+    local soc_ex="${shell_root}/packs/terminal/tmux/conf/tmux.verify-soc-theme.conf.ex"
     if [ ! -f "$soc_ex" ]; then
         soc_ex="${VERIFY_PLUGIN_ROOT}/conf/tmux.verify-soc-theme.conf.ex"
     fi
@@ -264,7 +264,7 @@ agent_strict_path_enabled() {
 }
 
 agent_strict_path_apply() {
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}"
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}"
     # shellcheck disable=SC1091
     . "$shell_root/core/path.sh"
     path_contract_apply_core_only
@@ -272,7 +272,7 @@ agent_strict_path_apply() {
 }
 
 agent_strict_path_check() {
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}" saved_path
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}" saved_path
     saved_path="$PATH"
     # Source in this shell — $(agent_strict_path_apply) runs a subshell and drops path_shadow_report.
     # shellcheck disable=SC1091
