@@ -106,22 +106,31 @@ static packedbox_ui_status_t packedbox_ui_paths_walk_up(
     const char *start_dir)
 {
     char current[PACKEDBOX_UI_PATH_BUF_BYTES];
+    char resolved[PACKEDBOX_UI_PATH_BUF_BYTES];
+    char parent[PACKEDBOX_UI_PATH_BUF_BYTES];
     int  depth = 0;
+    int  written = 0;
 
     assert(start_dir != NULL);
     (void)snprintf(current, sizeof(current), "%s", start_dir);
 
     for (depth = 0; depth < PACKEDBOX_UI_PATH_WALK_MAX; depth++) {
-        if (packedbox_ui_paths_is_root(current)) {
-            (void)snprintf(root_out, root_len, "%s", current);
+        if (realpath(current, resolved) == NULL)
+            return PACKEDBOX_UI_ERR_IO;
+
+        if (packedbox_ui_paths_is_root(resolved)) {
+            (void)snprintf(root_out, root_len, "%s", resolved);
             return PACKEDBOX_UI_OK;
         }
 
-        if (strcmp(current, "/") == 0)
+        if (strcmp(resolved, "/") == 0)
             break;
 
-        (void)snprintf(current, sizeof(current), "%s/..", current);
-        if (realpath(current, current) == NULL)
+        written = snprintf(parent, sizeof(parent), "%s/..", resolved);
+        if (written < 0 || (size_t)written >= sizeof(parent))
+            return PACKEDBOX_UI_ERR_IO;
+
+        if (realpath(parent, current) == NULL)
             return PACKEDBOX_UI_ERR_IO;
     }
 
