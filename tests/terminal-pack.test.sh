@@ -158,12 +158,8 @@ assert_with_terminal() {
 }
 
 assert_with_terminal ubuntu
+assert_with_terminal debian
 assert_with_terminal arch
-if grep -qF -- '--with-terminal' "$ROOT/adapters/debian/install.sh"; then
-    assert_with_terminal debian
-else
-    ok 'debian adapter PATH-only (no --with-terminal yet)'
-fi
 
 if grep -q 'ensure_ghostty' "$ROOT/adapters/ubuntu/install.sh" \
     && grep -q 'snap install ghostty' "$ROOT/adapters/ubuntu/install.sh" \
@@ -173,19 +169,21 @@ else
     fail 'ubuntu adapter missing ghostty install path'
 fi
 
-if grep -q 'pacman -Si ghostty' "$ROOT/adapters/arch/install.sh" \
+if grep -q 'ensure_ghostty' "$ROOT/adapters/debian/install.sh" \
+    && grep -q 'snap install ghostty' "$ROOT/adapters/debian/install.sh" \
+    && grep -q 'ghostty.org/docs/install/binary' "$ROOT/adapters/debian/install.sh"; then
+    ok 'debian adapter best-effort installs ghostty (apt/snap + warn)'
+else
+    fail 'debian adapter missing ghostty install path'
+fi
+
+if grep -q 'ensure_ghostty' "$ROOT/adapters/arch/install.sh" \
+    && grep -q 'pacman -Si ghostty' "$ROOT/adapters/arch/install.sh" \
     && grep -q 'paru -S' "$ROOT/adapters/arch/install.sh" \
     && grep -q 'omarchy-install-terminal' "$ROOT/adapters/arch/install.sh"; then
     ok 'arch adapter best-effort installs ghostty (pacman/paru/omarchy)'
 else
     fail 'arch adapter missing ghostty install path'
-fi
-
-if grep -q 'ensure_ghostty' "$ROOT/adapters/debian/install.sh" 2>/dev/null \
-    || grep -q 'ghostty' "$ROOT/adapters/debian/install.sh" 2>/dev/null; then
-    ok 'debian adapter mentions ghostty install path'
-else
-    ok 'debian adapter has no ghostty path yet (PATH-only Phase 5)'
 fi
 
 if grep -qE 'split-window .*-p ["$]' "$ROOT/packs/terminal/tmux/lib/verify-layout.sh" \
