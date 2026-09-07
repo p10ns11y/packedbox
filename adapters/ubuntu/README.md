@@ -27,22 +27,30 @@ Configs under `~/.config/ghostty` are always deployed by the terminal pack even 
 ./adapters/ubuntu/install.sh --with-terminal # + tmux/neovim/ghostty + terminal pack
 ```
 
+Prefer **Ghostty** when the binary is installed (`ghostty`).
+
 ### tmux on cloud desktops
 
 Prefer the distro binary so Cursor’s `/exec-daemon/tmux` is not nested by mistake:
 
 ```bash
 /usr/bin/tmux -f ~/.config/tmux/tmux.conf
-# or after a new shell (aliases from core/tmux-workflow.sh):
+# or after env loads (helpers from core/tmux-workflow.sh):
 pb_tmux new -s packedbox
 ```
 
-Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts:
+Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts must run **inside** tmux — Prefix binds or shellyxz-style helpers after `source ~/.config/packedbox/core/env.sh` (or a new shell):
 
 | Key / command | Layout |
 |---------------|--------|
 | `Prefix+V` or `av` | verify cockpit |
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
+
+Script fallbacks: `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
+
+### Cloud / new machines
+
+Repo and installer changes persist via git. Apt packages and `~/.config` installs are per-machine — re-run `./adapters/ubuntu/install.sh --with-terminal` on new cloud agents (or bake into an environment snapshot).
 
 See [docs/PHASES.md](../../docs/PHASES.md).

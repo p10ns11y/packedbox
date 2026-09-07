@@ -72,14 +72,25 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 ./adapters/arch/install.sh --with-terminal
 ```
 
-tmux verify overlay uses **Ctrl-b** as Prefix (optional **Ctrl-Space** as `prefix2`). Shellyxz-style helpers after `core/env.sh` loads:
+Prefer **Ghostty** when available (`ghostty`). Start tmux with the packedbox conf (prefer distro `/usr/bin/tmux` on Cursor clouds):
 
 ```bash
-/usr/bin/tmux -f ~/.config/tmux/tmux.conf   # prefer distro tmux on Cursor clouds
-av   # or Prefix+V — verify cockpit
-ab   # or Prefix+B — agent build
-at   # or Prefix+T — test cockpit
+/usr/bin/tmux -f ~/.config/tmux/tmux.conf
+# or after env loads:
+pb_tmux new -s packedbox
 ```
+
+Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts must run **inside** a tmux session — either Prefix binds or shellyxz-style helpers after `source ~/.config/packedbox/core/env.sh` (or a new shell):
+
+| Key / command | Layout |
+|---------------|--------|
+| `Prefix+V` or `av` | verify cockpit |
+| `Prefix+B` or `ab` | agent build |
+| `Prefix+T` or `at` | test cockpit |
+
+Script fallbacks: `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
+
+**Persistence:** repo/installer changes persist via git; apt packages and `~/.config` installs are per-machine — re-run `./adapters/ubuntu/install.sh --with-terminal` on new cloud agents (or bake into an environment snapshot).
 
 ### CLI status (Phase 3)
 

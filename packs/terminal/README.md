@@ -27,4 +27,27 @@ install.sh        # deploy pack + wire ~/.config/{ghostty,tmux,nvim}
 PACKEDBOX_THEME=eye-comfort-light ./packs/terminal/install.sh
 ```
 
-Arch one-shot: `./adapters/arch/install.sh --with-terminal`
+Arch one-shot: `./adapters/arch/install.sh --with-terminal`  
+Ubuntu one-shot: `./adapters/ubuntu/install.sh --with-terminal`
+
+## Usage
+
+Prefer **Ghostty** when available (`ghostty`). Start tmux:
+
+```bash
+/usr/bin/tmux -f ~/.config/tmux/tmux.conf
+# or (after env loads):
+pb_tmux new -s packedbox
+```
+
+Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require an active tmux session:
+
+| Key / command | Layout |
+|---------------|--------|
+| `Prefix+V` or `av` | verify cockpit |
+| `Prefix+B` or `ab` | agent build |
+| `Prefix+T` or `at` | test cockpit |
+
+Helpers (`av` / `ab` / `at` / `pb_tmux`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh` — use a new shell after install, or `source ~/.config/packedbox/core/env.sh`.
+
+Script fallbacks (same layouts): `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
