@@ -119,6 +119,24 @@ packedbox_ui_status_t packedbox_ui_jobs_about_text(char *buf, size_t buf_len)
     return PACKEDBOX_UI_OK;
 }
 
+const char *packedbox_ui_jobs_page_tag(packedbox_ui_job_kind_t kind)
+{
+    switch (kind) {
+    case PACKEDBOX_UI_JOB_FIX_PATH:
+        return "job-fix-path";
+    case PACKEDBOX_UI_JOB_CHECK_PATH:
+        return "job-check-path";
+    case PACKEDBOX_UI_JOB_INSTALL_CORE:
+        return "job-install-core";
+    case PACKEDBOX_UI_JOB_INSTALL_TERMINAL:
+        return "job-install-terminal";
+    case PACKEDBOX_UI_JOB_ABOUT:
+        return "job-about";
+    default:
+        return NULL;
+    }
+}
+
 static void packedbox_ui_jobs_copy_args(
     packedbox_ui_job_t            *job_out,
     const packedbox_ui_job_spec_t *spec)

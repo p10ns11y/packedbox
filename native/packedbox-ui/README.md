@@ -4,15 +4,15 @@ Thin **GTK4 + libadwaita** UI over the same packedbox shell backends as the CLI 
 
 ## Jobs
 
-| Job | Backend |
-|-----|---------|
-| Fix PATH | `installers/fix-path.sh` |
-| Check PATH | `core/check-path.sh` |
-| Install core | `installers/fix-path.sh --install` |
-| Install terminal pack | `packs/terminal/install.sh` |
-| About | Built-in version text |
+| Job | Backend | Navigation tag |
+|-----|---------|----------------|
+| Fix PATH | `installers/fix-path.sh` | `job-fix-path` |
+| Check PATH | `core/check-path.sh` | `job-check-path` |
+| Install core | `installers/fix-path.sh --install` | `job-install-core` |
+| Install terminal pack | `packs/terminal/install.sh` | `job-install-terminal` |
+| About | Built-in version text | `job-about` |
 
-The UI shells out to these scripts — it does not reimplement PATH logic in GTK.
+The UI uses **AdwNavigationView** (libadwaita ≥1.4): root page `home` lists jobs; each job is a static tagged page with `AdwToolbarView` + auto-back `AdwHeaderBar`, output pane, and Run control. Navigation uses `push_by_tag`; backends are invoked via `GSubprocess` only.
 
 ## Dependencies
 

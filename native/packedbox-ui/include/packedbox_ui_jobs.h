@@ -44,4 +44,7 @@ packedbox_ui_status_t packedbox_ui_jobs_describe(
  * buf is NULL or too small. */
 packedbox_ui_status_t packedbox_ui_jobs_about_text(char *buf, size_t buf_len);
 
+/* Returns the AdwNavigationView page tag for kind. NULL when invalid. */
+const char *packedbox_ui_jobs_page_tag(packedbox_ui_job_kind_t kind);
+
 #endif /* PACKEDBOX_UI_JOBS_H */
