@@ -62,7 +62,8 @@ else
     if command -v lazygit >/dev/null 2>&1; then
         verify_launch_pane 'verify.0' monitor 'GIT' "$DIR" lazygit
     else
-        verify_launch_pane 'verify.0' monitor 'GIT' "$DIR" "echo 'install lazygit (optional: paru -S lazygit)'"
+        verify_launch_pane 'verify.0' monitor 'GIT' "$DIR" \
+            "$(verify_missing_pkg_echo lazygit 'install lazygit')"
     fi
 
     verify_launch_pane 'verify.1' monitor 'BUILD' "$DIR" ''

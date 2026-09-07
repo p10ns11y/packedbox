@@ -132,5 +132,75 @@ else
     ok 'tmux splits use -l N% (Ubuntu tmux 3.4 compatible)'
 fi
 
+# Distro-aware optional install hints (no Arch-only paru/pacman hardcoding).
+if grep -qE 'paru -S|pacman -S' \
+    "$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh" \
+    "$ROOT/packs/terminal/tmux/bin/agent-test-layout.sh"; then
+    fail 'layout scripts hardcode Arch package managers'
+else
+    ok 'layout scripts do not hardcode paru/pacman'
+fi
+if grep -q 'verify_missing_pkg_echo' \
+    "$ROOT/packs/terminal/tmux/bin/agent-verify-layout.sh" \
+    "$ROOT/packs/terminal/tmux/bin/agent-test-layout.sh" \
+    && grep -q 'verify_optional_install_cmd' \
+    "$ROOT/packs/terminal/tmux/lib/verify-launch.sh"; then
+    ok 'layout scripts use verify_missing_pkg_echo helper'
+else
+    fail 'missing verify_missing_pkg_echo wiring'
+fi
+
+hint_lib="$ROOT/packs/terminal/tmux/lib/verify-launch.sh"
+hint_tmp="$(mktemp -d)"
+trap 'rm -rf "$TMPHOME" "$hint_tmp"' EXIT
+printf 'ID=ubuntu\nID_LIKE=debian\n' >"$hint_tmp/os-ubuntu"
+printf 'ID=arch\n' >"$hint_tmp/os-arch"
+printf 'ID=fedora\n' >"$hint_tmp/os-other"
+
+assert_hint() {
+    local os_file="$1" pkg="$2" expect="$3" label="$4"
+    local got
+    got="$(
+        VERIFY_OS_RELEASE="$os_file" bash -c '
+            # shellcheck disable=SC1090
+            . "$1"
+            verify_optional_install_cmd "$2"
+        ' bash "$hint_lib" "$pkg"
+    )"
+    if [ "$got" = "$expect" ]; then
+        ok "$label"
+    else
+        fail "$label (got: $got)"
+    fi
+}
+
+assert_hint "$hint_tmp/os-ubuntu" lazygit \
+    'go install github.com/jesseduffield/lazygit@latest' \
+    'ubuntu lazygit hint uses go install (not in 24.04 apt)'
+assert_hint "$hint_tmp/os-ubuntu" btop \
+    'sudo apt install btop' \
+    'ubuntu btop hint uses apt'
+assert_hint "$hint_tmp/os-arch" lazygit \
+    'sudo pacman -S lazygit' \
+    'arch lazygit hint uses pacman (not paru)'
+assert_hint "$hint_tmp/os-arch" btop \
+    'sudo pacman -S btop' \
+    'arch btop hint uses pacman'
+assert_hint "$hint_tmp/os-other" lazygit \
+    'install lazygit' \
+    'generic lazygit hint has no package manager'
+
+ubuntu_echo="$(
+    VERIFY_OS_RELEASE="$hint_tmp/os-ubuntu" bash -c '
+        . "$1"
+        verify_missing_pkg_echo lazygit "install lazygit"
+    ' bash "$hint_lib"
+)"
+if [ "$ubuntu_echo" = "echo 'install lazygit (optional: go install github.com/jesseduffield/lazygit@latest)'" ]; then
+    ok 'ubuntu verify pane echo for missing lazygit'
+else
+    fail "ubuntu verify pane echo wrong (got: $ubuntu_echo)"
+fi
+
 echo "=== $FAIL failure(s) ==="
 [[ "$FAIL" -eq 0 ]]

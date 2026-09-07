@@ -6,6 +6,93 @@ set -euo pipefail
 VERIFY_LAUNCH_LIB_DIR="${VERIFY_LAUNCH_LIB_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 VERIFY_PLUGIN_ROOT="${VERIFY_PLUGIN_ROOT:-$(cd "$VERIFY_LAUNCH_LIB_DIR/.." && pwd)}"
 VERIFY_PANE_LAUNCH="${VERIFY_PANE_LAUNCH:-$VERIFY_PLUGIN_ROOT/bin/verify-pane-launch.sh}"
+# Override in tests: path to an os-release file (default /etc/os-release).
+VERIFY_OS_RELEASE="${VERIFY_OS_RELEASE:-/etc/os-release}"
+
+# Distro family from os-release: arch | debian | unknown
+verify_os_family() {
+    local id="" id_like=""
+    if [ -r "$VERIFY_OS_RELEASE" ]; then
+        # Read in a subshell so ID/ID_LIKE do not leak into callers.
+        id="$(
+            set +u
+            # shellcheck disable=SC1090
+            . "$VERIFY_OS_RELEASE"
+            printf '%s' "${ID:-}"
+        )"
+        id_like="$(
+            set +u
+            # shellcheck disable=SC1090
+            . "$VERIFY_OS_RELEASE"
+            printf '%s' "${ID_LIKE:-}"
+        )"
+    fi
+    case "$id" in
+        arch | endeavouros | manjaro | cachyos)
+            printf '%s' arch
+            return 0
+            ;;
+        debian | ubuntu | linuxmint | pop)
+            printf '%s' debian
+            return 0
+            ;;
+    esac
+    case " ${id_like} " in
+        *" arch "* | *" archlinux "*)
+            printf '%s' arch
+            return 0
+            ;;
+        *" debian "* | *" ubuntu "*)
+            printf '%s' debian
+            return 0
+            ;;
+    esac
+    printf '%s' unknown
+}
+
+# Optional install command for a missing tool (no package-manager guess for unknown).
+# lazygit: not in Ubuntu 24.04 / Debian 12 default apt — prefer go install.
+verify_optional_install_cmd() {
+    local pkg="${1:?pkg}"
+    local family
+    family="$(verify_os_family)"
+    case "$family" in
+        arch)
+            # lazygit and btop are in official repos (not AUR).
+            printf 'sudo pacman -S %s' "$pkg"
+            ;;
+        debian)
+            case "$pkg" in
+                lazygit)
+                    printf 'go install github.com/jesseduffield/lazygit@latest'
+                    ;;
+                *)
+                    printf 'sudo apt install %s' "$pkg"
+                    ;;
+            esac
+            ;;
+        *)
+            printf 'install %s' "$pkg"
+            ;;
+    esac
+}
+
+# Echo command for a missing optional pane tool, distro-aware.
+# lead: short lead-in, e.g. "install lazygit" or "btop not installed"
+verify_missing_pkg_echo() {
+    local pkg="${1:?pkg}"
+    local lead="${2:?lead}"
+    local cmd
+    cmd="$(verify_optional_install_cmd "$pkg")"
+    case "$cmd" in
+        "install $pkg")
+            printf "echo '%s'" "$lead"
+            ;;
+        *)
+            printf "echo '%s (optional: %s)'" "$lead" "$cmd"
+            ;;
+    esac
+}
 
 # Pane index base for the verify window (0 by default; may be 1 in user tmux config).
 verify_pane_base() {

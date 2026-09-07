@@ -122,7 +122,8 @@ else
     if command -v btop >/dev/null 2>&1; then
         test_launch_pane "${WIN}.0" 'BTOP' btop
     else
-        test_launch_pane "${WIN}.0" 'BTOP' "echo 'btop not installed (optional: pacman -S btop)'"
+        test_launch_pane "${WIN}.0" 'BTOP' \
+            "$(verify_missing_pkg_echo btop 'btop not installed')"
     fi
 
     if [ "$WATCH" = 1 ]; then
