@@ -38,7 +38,7 @@ Pack layout lives under `packs/terminal/`. Adapters decide how configs are insta
 
 ## Agent / C notes
 
-Root [AGENTS.md](AGENTS.md) lists build/test commands and the **write-legible-c** law for everything under `native/`. Current CLI is `0.2.0` with elomaxz `status` / `audit`. GTK4 UI remains Phase 4.
+Root [AGENTS.md](AGENTS.md) lists build/test commands, owner (**Steward** — machines/UI), and the **write-legible-c** law for everything under `native/`. Harness: `tools/harness/skills/packedbox/` (Cursor via `.cursor/skills/packedbox`). Current CLI is `0.2.0` with elomaxz `status` / `audit`. GTK4 UI remains Phase 4.
 
 ## Quick start (Phase 1 — PATH kernel)
 
