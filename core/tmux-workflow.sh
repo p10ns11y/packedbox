@@ -135,7 +135,8 @@ agent_back() {
     agent_build -c
 }
 
-# Shellyxz UX aliases (ab / av / at). `at` shadows batch at(1) intentionally.
-alias ab='agent_build'
-alias av='agent_verify'
-alias at='agent_test'
+# Shellyxz UX names (ab / av / at). `at` shadows batch at(1) intentionally.
+# Functions (not aliases) so they work in non-interactive bash and `type` finds them.
+ab() { agent_build "$@"; }
+av() { agent_verify "$@"; }
+at() { agent_test "$@"; }
