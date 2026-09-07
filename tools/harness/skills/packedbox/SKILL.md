@@ -42,7 +42,7 @@ AGENTS.md
 - [x] Phase 3 MVP: elomaxz `status` / `audit`
 - [ ] Phase 3.1: Cmd/effect shell for install/maintenance
 - [ ] Phase 4: GTK4/libadwaita UI
-- [ ] Phase 5: Debian adapter + CI matrix
+- [x] Phase 5: Debian adapter (CI matrix blocked on workflow scope)
 
 ## References
 

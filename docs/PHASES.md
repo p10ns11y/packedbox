@@ -62,8 +62,10 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | libadwaita application shell | `native/packedbox-ui/` |
 | Wire to shared C core | Same elomaxz state as CLI |
 
-## Phase 5 — Debian + full matrix
+## Phase 5 — Debian + full matrix **partial**
 
-- `adapters/debian/`
-- CI matrix: Arch, Debian, Ubuntu
-- Optional Omarchy preset detection (shellyxz `environments/omarchy/`)
+| Task | Status |
+|------|--------|
+| `adapters/debian/install.sh` PATH bootstrap | Done |
+| CI matrix: Arch, Debian, Ubuntu | Blocked (`workflow` OAuth scope) |
+| Omarchy preset detection | Deferred |
