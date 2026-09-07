@@ -35,11 +35,12 @@ Not `tmux -s` — that does not create a session. First attach:
 
 ```bash
 source ~/.config/packedbox/core/env.sh   # or a new bash login shell
-tn                                      # ≡ pb_tmux new -s packedbox (attach if exists)
+tn                                      # new -s packedbox (attach if exists)
 cd /path/to/project && av               # then: at / ab as needed
+t ls                                    # packedbox tmux wrapper (≡ pb_tmux)
 ```
 
-Re-attach: `tn` (or `pb attach -t packedbox`). Prefer `tn` / `pb_tmux` so Cursor’s `/exec-daemon/tmux` is not nested.
+Cheat sheet: `t` · `tn` · `av`. Re-attach: `tn` (or `t attach -t packedbox`). Prefer `t` / `tn` so Cursor’s `/exec-daemon/tmux` is not nested.
 
 Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts must run **inside** that session:
 

@@ -9,7 +9,7 @@ Pulled from [shellyxz.sh](https://github.com/p10ns11y/shellyxz.sh) `core/` in Ph
 | `path.contract` | PATH resolution phases (v2) |
 | `path.sh`, `path-resolve.sh` | Apply, verify, dedupe |
 | `env.sh`, `lib.sh` | Loader glue |
-| `tmux-workflow.sh` | Thin `ab` / `av` / `at` + `tn` / `pb_tmux` / `pb` (sourced from `env.sh`) |
+| `tmux-workflow.sh` | Thin `ab` / `av` / `at` + `t` / `tn` / `pb_tmux` / `pb` (sourced from `env.sh`) |
 | `tool.contract` | Command pins + shadow warnings |
 | `recover.sh` | Recovery when rc files break |
 | `check-path.sh` | PATH contract verification |

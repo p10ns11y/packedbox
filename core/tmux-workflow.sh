@@ -41,7 +41,8 @@ pb_tmux() {
     fi
 }
 
-# Short alias for pb_tmux (e.g. pb attach -t packedbox).
+# Short aliases for pb_tmux (e.g. t ls, t attach -t foo, pb attach -t packedbox).
+t() { pb_tmux "$@"; }
 pb() { pb_tmux "$@"; }
 
 # tn — new packedbox session (default name: packedbox). Attach if it already exists.

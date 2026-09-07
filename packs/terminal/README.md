@@ -36,11 +36,12 @@ Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s`):
 
 ```bash
 source ~/.config/packedbox/core/env.sh   # or a new bash login shell
-tn                                      # ≡ pb_tmux new -s packedbox (attach if exists)
+tn                                      # new -s packedbox (attach if exists)
 cd /path/to/project && av               # verify; or at / ab
+t ls                                    # packedbox tmux wrapper (≡ pb_tmux)
 ```
 
-Re-attach: `tn` (or `pb attach -t packedbox`).
+Cheat sheet: `t` · `tn` · `av`. Re-attach: `tn` (or `t attach -t packedbox`).
 
 Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require that session:
 
@@ -50,7 +51,7 @@ Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require that sess
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
 
-Helpers (`tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, `av` prints: `run: tn  (then av)`.
+Helpers (`t` / `tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, `av` prints: `run: tn  (then av)`.
 
 Optional pane tools use os-release install hints (Ubuntu `apt` / Arch `pacman`; lazygit on Debian/Ubuntu prefers `go install`).
 

@@ -43,6 +43,7 @@ fi
 
 cat <<'EOF'
 
+Cheat sheet: t (tmux) · tn (new/attach) · av (verify)
 First attach (not `tmux -s`):
   source ~/.config/packedbox/core/env.sh
   tn
@@ -52,7 +53,7 @@ Reload tmux (inside a tmux session):
   Prefix+q     (Ctrl-b or Ctrl-Space, release, then q)
 
 Prefix: Ctrl-b (default) · Ctrl-Space (prefix2)
-Launch: tn  (= pb_tmux new -s packedbox; attach if exists)
+Launch: tn  (= t new -s packedbox; attach if exists)
 
 Workflow keys — use SHIFT (capital letters), or shell helpers:
   Prefix+B / ab   agent build   (Shift+b — not lowercase b)
