@@ -51,7 +51,7 @@ Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts require that sess
 | `Prefix+B` or `ab` | agent build |
 | `Prefix+T` or `at` | test cockpit |
 
-Helpers (`t` / `tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, `av` prints: `run: tn  (then av)`.
+Helpers (`t` / `tn` / `av` / `ab` / `at` / `pb_tmux` / `pb`) come from `core/tmux-workflow.sh`, sourced by `core/env.sh`. Outside tmux, helpers print `run: tn  (then <helper>)`.
 
 Optional pane tools use os-release install hints (Ubuntu `apt` / Arch `pacman`; lazygit on Debian/Ubuntu prefers `go install`).
 

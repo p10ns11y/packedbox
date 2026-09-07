@@ -72,30 +72,17 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 ./adapters/arch/install.sh --with-terminal
 ```
 
-Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s` — that flag does not create a session):
+Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s`):
 
 ```bash
-source ~/.config/packedbox/core/env.sh   # or open a new bash login shell
-tn                                      # new -s packedbox (attach if exists)
-cd /path/to/project && av               # verify cockpit; or: at / ab
-t ls                                    # packedbox tmux wrapper (≡ pb_tmux)
+source ~/.config/packedbox/core/env.sh
+tn
+cd /path/to/project && av
 ```
 
-Cheat sheet: `t` (tmux wrapper) · `tn` (new/attach packedbox) · `av` (verify). Re-attach: `tn` (or `t attach -t packedbox`).
+Cheat sheet: `t` · `tn` · `av` · Prefix **Ctrl-b** (also Ctrl-Space). Full workflow, keys, and install hints: [packs/terminal/README.md](packs/terminal/README.md).
 
-Prefix = **Ctrl-b** (also **Ctrl-Space** / `prefix2`). Layouts must run **inside** that session:
-
-| Key / command | Layout |
-|---------------|--------|
-| `Prefix+V` or `av` | verify cockpit |
-| `Prefix+B` or `ab` | agent build |
-| `Prefix+T` or `at` | test cockpit |
-
-Optional tools (lazygit / btop) print **distro-aware** install hints (Ubuntu: `apt` / `go install`; Arch: `pacman`).
-
-Script fallbacks: `~/.config/packedbox/packs/terminal/tmux/bin/agent-*-layout.sh`.
-
-**Persistence:** repo/installer changes persist via git; apt packages and `~/.config` installs are per-machine — re-run `./adapters/ubuntu/install.sh --with-terminal` on new cloud agents (or bake into an environment snapshot).
+**Persistence:** apt packages and `~/.config` installs are per-machine — re-run `./adapters/ubuntu/install.sh --with-terminal` on new cloud agents (or bake into an environment snapshot).
 
 ### CLI status (Phase 3)
 
