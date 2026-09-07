@@ -38,7 +38,8 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 |------|--------|
 | Status enums, version/help dispatch, warning flags | Done |
 | Repo `AGENTS.md` C law + build/test table | Done |
-| `tests/cli-smoke.test.sh` + `.github/workflows/native-c.yml` | Done |
+| `tests/cli-smoke.test.sh` | Done |
+| `.github/workflows/native-c.yml` | Local file ready; needs `workflow` OAuth scope to publish |
 | FetchContent elomaxz | Deferred to Phase 3 |
 | GTK4 shell | Deferred to Phase 4 |
 
