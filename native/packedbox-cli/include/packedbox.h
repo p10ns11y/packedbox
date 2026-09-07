@@ -1,0 +1,6 @@
+#ifndef PACKEDBOX_VERSION_H
+#define PACKEDBOX_VERSION_H
+
+#define PACKEDBOX_VERSION "0.0.0-phase0"
+
+#endif
