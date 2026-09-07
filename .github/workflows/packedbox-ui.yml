@@ -1,0 +1,52 @@
+name: packedbox-ui
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'native/packedbox-ui/**'
+      - 'tests/ui-smoke.test.sh'
+      - 'tests/cli-smoke.test.sh'
+      - '.github/workflows/packedbox-ui.yml'
+  pull_request:
+    paths:
+      - 'native/packedbox-ui/**'
+      - 'tests/ui-smoke.test.sh'
+      - 'tests/cli-smoke.test.sh'
+      - '.github/workflows/packedbox-ui.yml'
+
+jobs:
+  ui-headless:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install cmake
+        run: sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cmake
+
+      - name: UI headless smoke (no GTK required)
+        run: bash tests/ui-smoke.test.sh
+
+  ui-gtk:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+            cmake pkg-config libgtk-4-dev libadwaita-1-dev
+
+      - name: Configure and build GTK UI
+        run: |
+          cmake -B native/packedbox-ui/build-ci -S native/packedbox-ui
+          cmake --build native/packedbox-ui/build-ci
+          ctest --test-dir native/packedbox-ui/build-ci --output-on-failure
+
+      - name: Verify headless flags on GTK binary
+        run: |
+          native/packedbox-ui/build-ci/packedbox-ui --version
+          native/packedbox-ui/build-ci/packedbox-ui --help

@@ -1,15 +1,26 @@
 # packedbox-ui
 
-Thin **GTK4 + libadwaita** UI over the packedbox elomaxz core (Phase 4).
+Thin **GTK4 + libadwaita** UI over packedbox shell backends (Phase 4).
 
-## Current
+## Navigation pages (CoS)
 
-Version `0.1.0` stub under **write-legible-c**: status enum and banner only. Prefer GTK4/libadwaita per [ADR-0001](../../docs/ADR-0001-tech-stack.md).
+| Tag | Backend |
+|-----|---------|
+| `home` | Entry list |
+| `install-fix-path` | `installers/fix-path.sh` (apply / `--install`) |
+| `adapters` | `adapters/{arch,debian,ubuntu}/install.sh` |
+| `terminal-pack` | `packs/terminal/install.sh` |
+| `status` | `core/check-path.sh`, `packedbox status|audit` |
 
-## Dependencies (Phase 4)
+`AdwNavigationView` (libadwaita ≥1.4): home lists entries; each page is `AdwToolbarView` + auto-back `AdwHeaderBar` + output pane. Navigation uses `push_by_tag`. No PATH logic in GTK — `GSubprocess` only.
 
-- gtk4
-- libadwaita-1
+## Dependencies
+
+**Full UI:** `libgtk-4-dev`, `libadwaita-1-dev` (or Arch `gtk4`, `libadwaita`)
+
+**Headless stub:** builds without GTK for CI (`--version`, `--help`).
+
+Set `PACKEDBOX_ROOT` to override repository discovery.
 
 ## Build
 
@@ -17,7 +28,12 @@ Version `0.1.0` stub under **write-legible-c**: status enum and banner only. Pre
 cmake -B build -S .
 cmake --build build
 ctest --test-dir build --output-on-failure
-./build/packedbox-ui
+./build/packedbox-ui --version   # headless
+./build/packedbox-ui             # GTK when deps present
 ```
 
-Warning flags: `-Wall -Wextra -Werror -Wconversion -Wshadow`. See repo-root [AGENTS.md](../../AGENTS.md).
+Stub only: `cmake -B build -S . -DPACKEDBOX_UI_BUILD_GTK=OFF`
+
+## CI
+
+`ubuntu-path` / CLI smoke do not require GTK. Optional `.github/workflows/packedbox-ui.yml` builds the full UI when dev packages are installed.
