@@ -44,16 +44,20 @@ fi
 cat <<'EOF'
 
 Reload tmux (inside a tmux session):
-  Prefix+q     (Ctrl+Space, release, then q)
+  Prefix+q     (Ctrl-b or Ctrl-Space, release, then q)
 
-Workflow keys — use SHIFT (capital letters):
-  Prefix+B     agent build   (Shift+b — not lowercase b)
-  Prefix+V     verify cockpit (Shift+v — not lowercase v = vertical split)
-  Prefix+T     test cockpit   (Shift+t)
+Prefix: Ctrl-b (default) · Ctrl-Space (prefix2)
+Launch (cloud-safe): /usr/bin/tmux -f ~/.config/tmux/tmux.conf
+  or: pb_tmux
 
-Omarchy splits (unchanged, lowercase):
-  Prefix+h     split horizontal
-  Prefix+v     split vertical
+Workflow keys — use SHIFT (capital letters), or shell helpers:
+  Prefix+B / ab   agent build   (Shift+b — not lowercase b)
+  Prefix+V / av   verify cockpit (Shift+v — not lowercase v = vertical split)
+  Prefix+T / at   test cockpit   (Shift+t)
+
+Stock splits (lowercase / punctuation; host tmux.conf may override):
+  Prefix+%     split vertical
+  Prefix+"     split horizontal
 
 Keymap menu: Prefix+?  or click status-right
 EOF

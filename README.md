@@ -72,6 +72,15 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 ./adapters/arch/install.sh --with-terminal
 ```
 
+tmux verify overlay uses **Ctrl-b** as Prefix (optional **Ctrl-Space** as `prefix2`). Shellyxz-style helpers after `core/env.sh` loads:
+
+```bash
+/usr/bin/tmux -f ~/.config/tmux/tmux.conf   # prefer distro tmux on Cursor clouds
+av   # or Prefix+V — verify cockpit
+ab   # or Prefix+B — agent build
+at   # or Prefix+T — test cockpit
+```
+
 ### CLI status (Phase 3)
 
 ```bash

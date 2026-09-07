@@ -63,6 +63,47 @@ if grep -qF '~/.config/shell/' "$TMPHOME/.config/tmux/verify.conf"; then
 else
     ok 'verify.conf uses packedbox pack bin paths'
 fi
+if grep -qF 'set -g prefix C-b' "$TMPHOME/.config/tmux/verify.conf" \
+    && grep -qF 'set -g prefix2 C-Space' "$TMPHOME/.config/tmux/verify.conf"; then
+    ok 'verify.conf sets Ctrl-b prefix and Ctrl-Space prefix2'
+else
+    fail 'verify.conf missing explicit prefix / prefix2'
+fi
+if grep -qE '^bind q source-file' "$TMPHOME/.config/tmux/verify.conf"; then
+    ok 'verify.conf binds Prefix+q to reload tmux.conf'
+else
+    fail 'verify.conf missing Prefix+q reload bind'
+fi
+require_file "$ROOT/core/tmux-workflow.sh"
+if grep -qF 'tmux-workflow.sh' "$ROOT/core/env.sh"; then
+    ok 'env.sh sources tmux-workflow.sh'
+else
+    fail 'env.sh does not source tmux-workflow.sh'
+fi
+if grep -qF 'tmux-workflow.sh' "$ROOT/installers/lib/packedbox-install.sh"; then
+    ok 'packedbox-install deploys tmux-workflow.sh'
+else
+    fail 'packedbox-install missing tmux-workflow.sh install'
+fi
+if HOME="$TMPHOME" bash -lc '
+    PACKEDBOX_ROOT="$HOME/.config/packedbox"
+    mkdir -p "$PACKEDBOX_ROOT/core" "$PACKEDBOX_ROOT/packs/terminal/tmux/bin"
+    cp -a "'"$ROOT"'/core/." "$PACKEDBOX_ROOT/core/"
+    # stub layout bins so _packedbox_layout_script succeeds on --help-style checks
+    for s in agent-build-layout.sh agent-verify-layout.sh agent-test-layout.sh; do
+        printf "#!/bin/sh\necho stub-%s \"\$@\"\n" "$s" >"$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
+        chmod +x "$PACKEDBOX_ROOT/packs/terminal/tmux/bin/$s"
+    done
+    # shellcheck disable=SC1091
+    . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
+    type ab >/dev/null && type av >/dev/null && type at >/dev/null \
+        && type agent_build >/dev/null && type agent_verify >/dev/null && type agent_test >/dev/null \
+        && type pb_tmux >/dev/null
+'; then
+    ok 'ab/av/at and pb_tmux helpers load from tmux-workflow.sh'
+else
+    fail 'ab/av/at helpers did not load'
+fi
 if [[ -f "$TMPHOME/.config/nvim/lua/plugins/packedbox-theme.lua" ]]; then
     ok 'install.sh wires nvim theme plugin'
 else

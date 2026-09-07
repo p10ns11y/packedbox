@@ -27,4 +27,22 @@ Configs under `~/.config/ghostty` are always deployed by the terminal pack even 
 ./adapters/ubuntu/install.sh --with-terminal # + tmux/neovim/ghostty + terminal pack
 ```
 
+### tmux on cloud desktops
+
+Prefer the distro binary so Cursor’s `/exec-daemon/tmux` is not nested by mistake:
+
+```bash
+/usr/bin/tmux -f ~/.config/tmux/tmux.conf
+# or after a new shell (aliases from core/tmux-workflow.sh):
+pb_tmux new -s packedbox
+```
+
+Prefix is **Ctrl-b** (also **Ctrl-Space** as `prefix2`). Layouts:
+
+| Key / command | Layout |
+|---------------|--------|
+| `Prefix+V` or `av` | verify cockpit |
+| `Prefix+B` or `ab` | agent build |
+| `Prefix+T` or `at` | test cockpit |
+
 See [docs/PHASES.md](../../docs/PHASES.md).

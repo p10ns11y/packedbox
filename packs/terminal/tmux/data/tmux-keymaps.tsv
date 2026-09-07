@@ -14,7 +14,7 @@ run	shell	Difftastic diff	gdf	send-keys:gdf
 run	shell	Fuzzy open file	vf	send-keys:vf
 run	tmux	Zoom pane	Prefix+Z	resize-pane -Z
 run	tmux	Cycle layout	Prefix+Space	cycle-layout
-run	tmux	Reload config	Prefix+q	source-file ~/.config/tmux/tmux.conf
+run	tmux	Reload config	Prefix+q (Ctrl-b/Ctrl-Space)	source-file ~/.config/tmux/tmux.conf
 view	nvim	Verify grep preset	leader va	live_grep TODO|FIXME|panic|unwrap
 view	nvim	Find files (cwd)	leader vf	Telescope find_files
 view	nvim	Harpoon pin	leader vh	Add current file
