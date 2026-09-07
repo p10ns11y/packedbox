@@ -18,8 +18,9 @@ description: Work on packedbox — portable Linux bootstrap (Arch/Debian/Ubuntu)
 
 1. **No large code melt** — one concern per PR; update PULL-INVENTORY when pulling files.
 2. **`fix-path.sh` is required** — every install path must ship `installers/fix-path.sh`.
-3. **Phase discipline** — check `docs/PHASES.md` before implementing; Phase 1 = PATH + recover + fix-path on Ubuntu CI only.
+3. **Phase discipline** — check `docs/PHASES.md` before implementing; Phase 1 PATH is done; Phase 1.5 is native C baseline; Phase 2 = terminal pack; Phase 3 = elomaxz CLI.
 4. **Tech stack** — C CLI + CMake + elomaxz; UI prefers GTK4/libadwaita (not Rust archy).
+5. **C under `native/`** — write-legible-c; see root `AGENTS.md`.
 
 ## Layout
 
@@ -30,18 +31,28 @@ packs/terminal/           # Ghostty + tmux + nvim
 installers/{install.sh,fix-path.sh}
 native/{packedbox-cli,packedbox-ui}/
 docs/{ADR-0001,PULL-INVENTORY,PHASES}.md
+AGENTS.md                 # build/test + C law
 ```
 
-## Phase 1 checklist (next)
+## Phase checklist
 
-- [ ] Pull shellyxz `core/path.contract`, `path.sh`, `path-resolve.sh` into `core/`
-- [ ] Adapt `bin/recover-shell.sh` → `core/recover.sh`
-- [ ] Make `installers/fix-path.sh` production-ready
-- [ ] `adapters/ubuntu/install.sh`
-- [ ] `.github/workflows/ubuntu-path.yml`
+### Phase 1 (done)
+
+- [x] Pull shellyxz PATH contract into `core/`
+- [x] Adapt recovery → `core/recover.sh`
+- [x] Production `installers/fix-path.sh`
+- [x] `adapters/ubuntu/install.sh`
+- [x] `.github/workflows/ubuntu-path.yml`
+
+### Phase 1.5 (native C baseline)
+
+- [x] write-legible-c CLI/UI stubs + `AGENTS.md`
+- [x] `tests/cli-smoke.test.sh` + native-c workflow
+- [ ] Phase 3 elomaxz FetchContent (not started)
 
 ## References
 
+- [AGENTS.md](../../../AGENTS.md)
 - [README.md](../../../README.md)
 - [docs/ADR-0001-tech-stack.md](../../../docs/ADR-0001-tech-stack.md)
 - [docs/PULL-INVENTORY.md](../../../docs/PULL-INVENTORY.md)

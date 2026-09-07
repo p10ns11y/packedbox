@@ -1,11 +1,14 @@
 # Build
 build/
+build-smoke/
 cmake-build-*/
 *.o
 *.a
 *.so
 
 # Native
+native/**/build/
+native/**/build-smoke/
 native/packedbox-cli/packedbox
 native/packedbox-ui/packedbox-ui
 

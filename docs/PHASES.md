@@ -12,7 +12,7 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | `tools/harness/skills/packedbox` agent skill | Done |
 | Source repos shellyxz.sh + arch-machine **not deleted** | Policy |
 
-## Phase 1 — PATH + recover + fix-path (Ubuntu CI) **← current**
+## Phase 1 — PATH + recover + fix-path (Ubuntu CI) **done**
 
 **Goal:** Ship the shellyxz PATH contract and recovery story on Ubuntu with CI proof.
 
@@ -29,6 +29,18 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 - `fix-path.sh` works from a clean `bash --norc` session on Ubuntu 24.04
 - CI green on PRs touching `core/` or `installers/fix-path.sh`
 - No Arch/Debian adapter work required yet
+
+## Phase 1.5 — Native C legibility baseline **← current**
+
+**Goal:** Make `native/packedbox-cli` and `native/packedbox-ui` write-legible-c conforming before elomaxz/GTK work.
+
+| Task | Status |
+|------|--------|
+| Status enums, version/help dispatch, warning flags | Done |
+| Repo `AGENTS.md` C law + build/test table | Done |
+| `tests/cli-smoke.test.sh` + `.github/workflows/native-c.yml` | Done |
+| FetchContent elomaxz | Deferred to Phase 3 |
+| GTK4 shell | Deferred to Phase 4 |
 
 ## Phase 2 — Terminal pack
 

@@ -36,6 +36,10 @@ The first user-visible pack wires a consistent terminal workflow:
 
 Pack layout lives under `packs/terminal/`. Adapters decide how configs are installed on each distro.
 
+## Agent / C notes
+
+Root [AGENTS.md](AGENTS.md) lists build/test commands and the **write-legible-c** law for everything under `native/`. Phase 1.5 landed a conforming CLI/UI baseline (`0.1.0`) before elomaxz (Phase 3) and GTK4 (Phase 4).
+
 ## Quick start (Phase 1 — PATH kernel)
 
 ```bash

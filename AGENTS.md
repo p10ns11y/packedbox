@@ -1,0 +1,59 @@
+# packedbox — agent notes
+
+Portable Linux bootstrap (Arch ± Omarchy, Debian, Ubuntu): PATH contract, terminal pack, C CLI + thin GTK UI. Melts ideas from `shellyxz.sh` and `arch-machine`; those repos stay alive.
+
+## Build / test / lint
+
+| Area | Command |
+|------|---------|
+| PATH contract | `bash tests/path-contract.test.sh` |
+| fix-path / recover | `bash tests/fix-path.test.sh` · `bash tests/recover.test.sh` |
+| CLI smoke | `bash tests/cli-smoke.test.sh` |
+| CLI cmake | `cmake -B native/packedbox-cli/build -S native/packedbox-cli && cmake --build native/packedbox-cli/build && ctest --test-dir native/packedbox-cli/build --output-on-failure` |
+| UI cmake | `cmake -B native/packedbox-ui/build -S native/packedbox-ui && cmake --build native/packedbox-ui/build && ctest --test-dir native/packedbox-ui/build --output-on-failure` |
+| Shell lint (CI) | `shellcheck` on `core/`, `installers/`, `adapters/ubuntu/` |
+
+Do not claim done without running the tests that cover the files you touched.
+
+## Boundaries
+
+| Do | Do not |
+|----|--------|
+| One concern per PR; update `docs/PULL-INVENTORY.md` when pulling upstream files | Large code melt from shellyxz / arch-machine |
+| Ship `installers/fix-path.sh` on every install path | Install flows without recovery |
+| Follow `docs/PHASES.md` — Phase 1 PATH is done; next is Phase 2 terminal pack or Phase 3 elomaxz CLI | Skip phases or invent parallel stacks |
+| C CLI on elomaxz + CMake; UI GTK4/libadwaita (Phase 4) | Port Rust `archy` / Electron control planes |
+
+## C law (`native/`)
+
+All C under `native/` follows **write-legible-c** (C11). Hard gates agents must not skip:
+
+- File order: comment → includes → constants → types → static prototypes → public defs → static defs
+- No naked literals except obvious 0/1; module status enum (`*_OK` = 0); check every fallible call
+- Functions: one job, ≤40 lines, nesting ≤2, ≤4 params (context → outputs → inputs), orchestrator / leaf / adapter only
+- No `goto` (unless one justified multi-resource cleanup), no recursion, every loop bounded
+- Public entry validates → `*_ERR_ARG`; static helpers `assert` invariants
+- Compile with `-Wall -Wextra -Werror -Wconversion -Wshadow`
+
+Full standard lives with the write-legible-c skill (`references/c-standard.md`). Repo code wins on ABI and phase scope; document deviations at the site.
+
+### Pattern (from `native/packedbox-cli`)
+
+```c
+packedbox_status_t packedbox_cli_run(int argc, char **argv)
+{
+    PACKEDBOX_TRY(packedbox_validate_cli_args(argc, argv));
+    /* dispatch named predicates; no inline logic */
+    return PACKEDBOX_OK;
+}
+```
+
+## Intentional architecture (looks odd, keep it)
+
+1. **Bash adapters execute; C decides later** — Phase 1 is shell PATH/recovery on purpose; elomaxz state machines land in Phase 3, not by rewriting installers in C early.
+2. **`fix-path.sh` is a product surface** — PATH bricks are expected; recovery is not optional tooling.
+3. **Upstream repos are not deleted** — selective pull with inventory rows, never a wholesale copy.
+
+## Docs map
+
+Capability docs: `README.md`, `docs/ADR-0001-tech-stack.md`, `docs/PHASES.md`, `docs/PULL-INVENTORY.md`. Per-tree purpose: directory `README.md` files. Harness skill: `tools/harness/skills/packedbox/SKILL.md`.
