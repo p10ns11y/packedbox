@@ -11,12 +11,12 @@ enum {
 
 typedef enum {
     PACKEDBOX_UI_OK      = 0,
-    PACKEDBOX_UI_ERR_ARG = 1
+    PACKEDBOX_UI_ERR_ARG = 1,
+    PACKEDBOX_UI_ERR_IO  = 2
 } packedbox_ui_status_t;
 
-/* Runs the UI stub entry. argc/argv are borrowed. Fails with
- * PACKEDBOX_UI_ERR_ARG on invalid arguments. Phase 4 replaces the body
- * with GtkApplication + AdwApplicationWindow. */
+/* Runs packedbox-ui. Without GTK this prints the headless banner; with GTK
+ * this launches AdwApplication unless --version or --help is given. */
 packedbox_ui_status_t packedbox_ui_run(int argc, char **argv);
 
 #endif /* PACKEDBOX_UI_H */

@@ -55,12 +55,14 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | write-legible-c adapters around foreign void* ABI | Done |
 | Install/maintenance Cmd shell effects | Deferred (Phase 3.1) |
 
-## Phase 4 — packedbox-ui (GTK4) **← next**
+## Phase 4 — packedbox-ui (GTK4) **done**
 
-| Task | Notes |
-|------|-------|
-| libadwaita application shell | `native/packedbox-ui/` |
-| Wire to shared C core | Same elomaxz state as CLI |
+| Task | Notes | Status |
+|------|-------|--------|
+| libadwaita application shell | `native/packedbox-ui/` job list + output pane | Done |
+| Wire to shell backends | `fix-path.sh`, `check-path.sh`, `packs/terminal/install.sh` | Done |
+| Optional GTK CMake + headless stub | CI-safe when gtk4/libadwaita dev packages absent | Done |
+| `.github/workflows/packedbox-ui.yml` | Headless smoke + gated GTK build on ubuntu-24.04 | Done |
 
 ## Phase 5 — Debian + full matrix **partial**
 

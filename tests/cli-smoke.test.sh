@@ -69,11 +69,18 @@ else
 fi
 
 if [[ -x "$UI_BIN" ]]; then
-    ui_out=$("$UI_BIN" 2>&1) || fail 'packedbox-ui exit'
-    if [[ "$ui_out" == *"packedbox-ui 0.2.0"* ]]; then
-        ok 'packedbox-ui banner'
+    ui_ver=$("$UI_BIN" --version 2>&1) || fail 'packedbox-ui --version exit'
+    if [[ "$ui_ver" == *"packedbox-ui 0.2.0"* ]]; then
+        ok 'packedbox-ui --version'
     else
-        fail "packedbox-ui output: $ui_out"
+        fail "packedbox-ui --version output: $ui_ver"
+    fi
+
+    ui_help=$("$UI_BIN" --help 2>&1) || fail 'packedbox-ui --help exit'
+    if [[ "$ui_help" == *"Usage: packedbox-ui"* ]]; then
+        ok 'packedbox-ui --help'
+    else
+        fail "packedbox-ui --help output: $ui_help"
     fi
 else
     fail 'packedbox-ui binary missing'

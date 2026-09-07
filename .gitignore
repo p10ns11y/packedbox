@@ -8,7 +8,9 @@ cmake-build-*/
 
 # Native
 native/**/build/
+native/**/build-*/
 native/**/build-smoke/
+native/**/build-smoke-*/
 native/packedbox-cli/packedbox
 native/packedbox-ui/packedbox-ui
 
