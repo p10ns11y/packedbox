@@ -42,6 +42,32 @@ else
     ok 'fix-path --install deploys core'
 fi
 
+if [[ ! -f "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh" ]]; then
+    fail 'tmux-workflow.sh not installed to ~/.config/packedbox/core'
+else
+    ok 'fix-path --install deploys tmux-workflow.sh'
+fi
+
+if grep -qF 'tmux-workflow.sh' "$TEST_HOME/.config/packedbox/core/env.sh" \
+    && grep -qE '^ab\(\)|^av\(\)|^at\(\)' "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh"; then
+    ok 'installed env.sh sources tmux-workflow with ab/av/at'
+else
+    fail 'installed env/tmux-workflow missing ab/av/at wiring'
+fi
+
+# Fresh shell with bashrc managed block must define ab / av / at (functions).
+# Ubuntu login shells source ~/.bashrc via ~/.profile — seed a minimal profile.
+printf '%s\n' \
+    'if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi' \
+    >"$TEST_HOME/.profile"
+if HOME="$TEST_HOME" bash -lc '
+    type ab >/dev/null && type av >/dev/null && type at >/dev/null
+'; then
+    ok 'bashrc-managed shell defines ab/av/at'
+else
+    fail 'bashrc-managed shell missing ab/av/at'
+fi
+
 if [[ ! -x "$TEST_HOME/.local/bin/packedbox-fix-path" ]]; then
     fail 'packedbox-fix-path symlink missing'
 else

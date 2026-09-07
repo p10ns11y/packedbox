@@ -43,15 +43,18 @@ pb_tmux() {
 agent_build() {
     _packedbox_tmux_guard || return 1
     _pb_script="$(_packedbox_layout_script agent-build-layout.sh)" || return 1
-    _pb_dir="."
+    # Default cwd to $PWD (shellyxz UX); callers may pass an explicit directory.
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
     while [ $# -gt 0 ]; do
         case "$1" in
             -c | --continue | --strict)
                 break
                 ;;
             *)
-                if [ "$_pb_dir" = . ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
                     _pb_dir="$1"
+                    _pb_dir_set=1
                     shift
                 else
                     break
@@ -65,7 +68,8 @@ agent_build() {
 agent_verify() {
     _packedbox_tmux_guard || return 1
     _pb_script="$(_packedbox_layout_script agent-verify-layout.sh)" || return 1
-    _pb_dir="."
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
     _pb_scan=0
     _pb_mutate=0
     _pb_generic=0
@@ -84,8 +88,9 @@ agent_verify() {
                 shift
                 ;;
             *)
-                if [ "$_pb_dir" = . ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
                     _pb_dir="$1"
+                    _pb_dir_set=1
                     shift
                 else
                     echo "agent_verify: unknown argument: $1" >&2
@@ -112,15 +117,17 @@ agent_verify() {
 agent_test() {
     _packedbox_tmux_guard || return 1
     _pb_script="$(_packedbox_layout_script agent-test-layout.sh)" || return 1
-    _pb_dir="."
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
     while [ $# -gt 0 ]; do
         case "$1" in
             --watch | --run)
                 break
                 ;;
             *)
-                if [ "$_pb_dir" = . ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
+                if [ "$_pb_dir_set" = 0 ] && { [ "$1" = . ] || [ -d "$1" ]; }; then
                     _pb_dir="$1"
+                    _pb_dir_set=1
                     shift
                 else
                     break
