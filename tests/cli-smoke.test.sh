@@ -12,9 +12,15 @@ build_one() {
     local name="$1"
     local src="$ROOT/native/$name"
     local build="$src/build-smoke"
+    local extra_env=()
 
     rm -rf "$build"
-    cmake -B "$build" -S "$src" >/dev/null
+    if [[ "$name" == "packedbox-cli" && -f "${PACKEDBOX_ELOMAXZ_SOURCE_DIR:-}/src/elomaxz.c" ]]; then
+        extra_env=(env "PACKEDBOX_ELOMAXZ_SOURCE_DIR=$PACKEDBOX_ELOMAXZ_SOURCE_DIR")
+    elif [[ "$name" == "packedbox-cli" && -f "$HOME/Work/personal/elomaxz/src/elomaxz.c" ]]; then
+        extra_env=(env "PACKEDBOX_ELOMAXZ_SOURCE_DIR=$HOME/Work/personal/elomaxz")
+    fi
+    "${extra_env[@]}" cmake -B "$build" -S "$src" >/dev/null
     cmake --build "$build" >/dev/null
 }
 
@@ -26,7 +32,7 @@ UI_BIN="$ROOT/native/packedbox-ui/build-smoke/packedbox-ui"
 
 if [[ -x "$CLI_BIN" ]]; then
     out=$("$CLI_BIN" --version 2>&1) || fail 'packedbox --version exit'
-    if [[ "$out" == *"packedbox 0.1.0"* ]]; then
+    if [[ "$out" == *"packedbox 0.2.0"* ]]; then
         ok 'packedbox --version'
     else
         fail "packedbox --version output: $out"
@@ -37,6 +43,20 @@ if [[ -x "$CLI_BIN" ]]; then
         ok 'packedbox --help'
     else
         fail "packedbox --help output: $help_out"
+    fi
+
+    status_out=$("$CLI_BIN" status 2>&1) || fail 'packedbox status exit'
+    if [[ "$status_out" == *"packedbox status:"* ]]; then
+        ok 'packedbox status'
+    else
+        fail "packedbox status output: $status_out"
+    fi
+
+    audit_out=$("$CLI_BIN" audit 2>&1) || fail 'packedbox audit exit'
+    if [[ "$audit_out" == *"packedbox audit:"* ]]; then
+        ok 'packedbox audit'
+    else
+        fail "packedbox audit output: $audit_out"
     fi
 
     if "$CLI_BIN" --nope >/dev/null 2>&1; then
@@ -50,7 +70,7 @@ fi
 
 if [[ -x "$UI_BIN" ]]; then
     ui_out=$("$UI_BIN" 2>&1) || fail 'packedbox-ui exit'
-    if [[ "$ui_out" == *"packedbox-ui 0.1.0"* ]]; then
+    if [[ "$ui_out" == *"packedbox-ui 0.2.0"* ]]; then
         ok 'packedbox-ui banner'
     else
         fail "packedbox-ui output: $ui_out"

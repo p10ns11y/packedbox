@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "packedbox.h"
+#include "packedbox_app.h"
 
 enum {
     PACKEDBOX_VERSION_BUF_BYTES = 32
@@ -28,6 +29,12 @@ static bool packedbox_flag_is_help(const char *flag);
 
 /* True when flag is an exact match for --version or -V. Pure. */
 static bool packedbox_flag_is_version(const char *flag);
+
+/* True when flag requests the status command. Pure. */
+static bool packedbox_flag_is_status(const char *flag);
+
+/* True when flag requests the audit command. Pure. */
+static bool packedbox_flag_is_audit(const char *flag);
 
 /* Prints usage to stdout. */
 static void packedbox_print_usage(void);
@@ -56,6 +63,10 @@ packedbox_status_t packedbox_cli_run(int argc, char **argv)
         packedbox_print_version();
         return PACKEDBOX_OK;
     }
+    if (packedbox_flag_is_status(flag))
+        return packedbox_app_run_status();
+    if (packedbox_flag_is_audit(flag))
+        return packedbox_app_run_audit();
 
     packedbox_report_unknown_flag(flag);
     return PACKEDBOX_ERR_UNKNOWN;
@@ -93,10 +104,23 @@ static bool packedbox_flag_is_version(const char *flag)
     return strcmp(flag, "--version") == 0 || strcmp(flag, "-V") == 0;
 }
 
+static bool packedbox_flag_is_status(const char *flag)
+{
+    assert(flag != NULL);
+    return strcmp(flag, "status") == 0;
+}
+
+static bool packedbox_flag_is_audit(const char *flag)
+{
+    assert(flag != NULL);
+    return strcmp(flag, "audit") == 0;
+}
+
 static void packedbox_print_usage(void)
 {
-    printf("Usage: packedbox [--version|-V] [--help|-h]\n");
-    printf("Phase 3 will add elomaxz install/maintenance commands.\n");
+    printf("Usage: packedbox [--version|-V] [--help|-h] [status|audit]\n");
+    printf("  status  Probe installed core and terminal pack\n");
+    printf("  audit   Summarize install completeness\n");
 }
 
 static void packedbox_print_version(void)

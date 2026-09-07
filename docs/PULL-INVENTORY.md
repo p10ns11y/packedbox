@@ -754,3 +754,34 @@ vector.toml
 | Terminal pack | tmux verify plugin, starship | Ghostty themes (`modules/productivity/eye-comfort`) | `packs/terminal/` |
 | Distro install | `bin/migrate.sh`, `environments/*` | `install.sh`, `modules/*`, `adapters` N/A | `adapters/{arch,debian,ubuntu}/` |
 | Native CLI/UI | — | `tools/archy` (Rust), elomaxz plans in `.grok/ideas/` | `native/packedbox-cli` (C+elomaxz), `native/packedbox-ui` (GTK4) |
+
+---
+
+## Phase 2 pull log (2026-09-07)
+
+Selective copies only. Upstream repos unchanged.
+
+### arch-machine `modules/productivity/eye-comfort` → `packs/terminal/`
+
+| Source | Target |
+|--------|--------|
+| `snippets/ghostty.fragment.conf` | `ghostty/fragment.conf` |
+| `tokens/roles.json` | `ghostty/roles.json` |
+| `themes/eye-comfort-{dark,light,dawn,dusk}/ghostty.conf` | `ghostty/themes/.../ghostty.conf` |
+| `themes/eye-comfort-{dark,light,dawn,dusk}/neovim.lua` | `nvim/themes/.../neovim.lua` |
+| `nvim/omarchy-theme-hotreload.lua` | `nvim/omarchy-theme-hotreload.lua` |
+
+**Not pulled:** `themes/**/backgrounds/*`, TN packs, waybar/units/wrappers/yazi, `lib/*.py`, `bin/eye-comfort-theme`.
+
+### shellyxz.sh `plugins/verification` → `packs/terminal/tmux/`
+
+| Source | Target |
+|--------|--------|
+| `conf/tmux.{verify,status-mode,verify-soc-theme}.conf.ex` | `tmux/conf/` |
+| `data/tmux-keymaps.tsv` | `tmux/data/` |
+| layout bins (`sync-tmux-verify`, `agent-*-layout`, `tmux-*`, `verify-pane-launch`) | `tmux/bin/` |
+| `lib/verify-{layout,launch}.sh`, `lib/tmux-status-mode.sh` | `tmux/lib/` |
+
+**Adapted:** managed marker + default paths → `~/.config/packedbox/packs/terminal/tmux`.
+
+**Not pulled:** `docs/*.jpg`, cockpit-mcp, full test-discovery/`parse-project-tests` stack.

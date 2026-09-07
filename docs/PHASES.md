@@ -24,15 +24,7 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | Ubuntu adapter bootstrap | new | `adapters/ubuntu/install.sh` | Done |
 | CI | new | `.github/workflows/ubuntu-path.yml` | Done |
 
-**Exit criteria**
-
-- `fix-path.sh` works from a clean `bash --norc` session on Ubuntu 24.04
-- CI green on PRs touching `core/` or `installers/fix-path.sh`
-- No Arch/Debian adapter work required yet
-
-## Phase 1.5 — Native C legibility baseline **← current**
-
-**Goal:** Make `native/packedbox-cli` and `native/packedbox-ui` write-legible-c conforming before elomaxz/GTK work.
+## Phase 1.5 — Native C legibility baseline **done**
 
 | Task | Status |
 |------|--------|
@@ -40,27 +32,30 @@ High-level delivery plan. Phase 0 is **scaffold + docs only** — no large upstr
 | Repo `AGENTS.md` C law + build/test table | Done |
 | `tests/cli-smoke.test.sh` | Done |
 | `.github/workflows/native-c.yml` | Local file ready; needs `workflow` OAuth scope to publish |
-| FetchContent elomaxz | Deferred to Phase 3 |
-| GTK4 shell | Deferred to Phase 4 |
 
-## Phase 2 — Terminal pack
+## Phase 2 — Terminal pack **done**
 
-| Task | Source | Target |
-|------|--------|--------|
-| Ghostty config + theme tokens | arch-machine `modules/productivity/eye-comfort` | `packs/terminal/ghostty/` |
-| tmux verify cockpit | shellyxz `plugins/verification/` | `packs/terminal/tmux/` |
-| Neovim theme alignment | both | `packs/terminal/nvim/` |
-| Arch adapter | arch-machine `install.sh` patterns | `adapters/arch/` |
+| Task | Source | Target | Status |
+|------|--------|--------|--------|
+| Ghostty config + theme tokens | arch-machine eye-comfort | `packs/terminal/ghostty/` | Done |
+| tmux verify cockpit (selective) | shellyxz `plugins/verification/` | `packs/terminal/tmux/` | Done |
+| Neovim theme alignment | eye-comfort `neovim.lua` | `packs/terminal/nvim/` | Done |
+| Pack installer | new | `packs/terminal/install.sh` | Done |
+| Arch adapter | pacman patterns | `adapters/arch/install.sh` | Done |
+| Pack tests | new | `tests/terminal-pack.test.sh` | Done |
 
-## Phase 3 — packedbox-cli (elomaxz)
+**OUT of Phase 2:** wallpaper assets, waybar/yazi, eye-comfort Python timers, cockpit-mcp, full test-discovery stack.
 
-| Task | Notes |
-|------|-------|
-| FetchContent elomaxz in CMake | See arch-machine integration plans |
-| Model install/maintenance/audit msgs | Replace ad-hoc bash state |
-| `packedbox` CLI binary | `native/packedbox-cli/` |
+## Phase 3 — packedbox-cli (elomaxz) **done (MVP)**
 
-## Phase 4 — packedbox-ui (GTK4)
+| Task | Status |
+|------|--------|
+| FetchContent / local `PACKEDBOX_ELOMAXZ_SOURCE_DIR` | Done |
+| `status` / `audit` msgs via `elomaxz_run_batch` | Done |
+| write-legible-c adapters around foreign void* ABI | Done |
+| Install/maintenance Cmd shell effects | Deferred (Phase 3.1) |
+
+## Phase 4 — packedbox-ui (GTK4) **← next**
 
 | Task | Notes |
 |------|-------|

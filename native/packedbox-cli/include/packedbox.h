@@ -5,11 +5,11 @@
 
 enum {
     PACKEDBOX_VERSION_MAJOR = 0,
-    PACKEDBOX_VERSION_MINOR = 1,
+    PACKEDBOX_VERSION_MINOR = 2,
     PACKEDBOX_VERSION_PATCH = 0
 };
 
-#define PACKEDBOX_VERSION "0.1.0"
+#define PACKEDBOX_VERSION "0.2.0"
 
 typedef enum {
     PACKEDBOX_OK          = 0,

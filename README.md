@@ -38,7 +38,7 @@ Pack layout lives under `packs/terminal/`. Adapters decide how configs are insta
 
 ## Agent / C notes
 
-Root [AGENTS.md](AGENTS.md) lists build/test commands and the **write-legible-c** law for everything under `native/`. Phase 1.5 landed a conforming CLI/UI baseline (`0.1.0`) before elomaxz (Phase 3) and GTK4 (Phase 4).
+Root [AGENTS.md](AGENTS.md) lists build/test commands and the **write-legible-c** law for everything under `native/`. Current CLI is `0.2.0` with elomaxz `status` / `audit`. GTK4 UI remains Phase 4.
 
 ## Quick start (Phase 1 — PATH kernel)
 
@@ -59,18 +59,33 @@ bash ~/.config/packedbox/core/check-path.sh
 
 Full installer orchestration (`installers/install.sh --distro`) lands in a later phase.
 
-## OUT list (not in this repo yet)
+### Terminal pack (Phase 2)
 
-Explicit **out-of-scope** items. These stay upstream or land in later phases:
+```bash
+./packs/terminal/install.sh
+# or on Arch:
+./adapters/arch/install.sh --with-terminal
+```
+
+### CLI status (Phase 3)
+
+```bash
+export PACKEDBOX_ELOMAXZ_SOURCE_DIR=/path/to/elomaxz   # optional local override
+cmake -B native/packedbox-cli/build -S native/packedbox-cli
+cmake --build native/packedbox-cli/build
+./native/packedbox-cli/build/packedbox status
+./native/packedbox-cli/build/packedbox audit
+```
+
+## OUT list (deferred)
 
 | Item | Stays / lands |
 |------|----------------|
-| shellyxz verification plugin (`plugins/verification/`) | shellyxz.sh → `packs/terminal/` Phase 2 |
-| shellyxz full `bin/` task runner & migrate flow | shellyxz.sh — later phases |
-| arch-machine YAML profiles & `modules/*` installers | arch-machine → `adapters/arch/` Phase 2+ |
-| arch-machine `tools/archy`, `tools/groxy`, `tools/keeper` (Rust) | arch-machine — not ported; packedbox uses C/GTK instead |
-| arch-machine `.agents/`, `.grok/`, eye-comfort image assets (184+ theme files) | arch-machine — reference only until pack needs them |
-| elomaxz state machine implementation | elomaxz repo + `native/packedbox-cli` Phase 3 |
+| shellyxz full `bin/` task runner & migrate flow | shellyxz.sh — later |
+| arch-machine YAML profiles & full `modules/*` | arch-machine — later Arch depth |
+| arch-machine `tools/archy`, `tools/groxy`, `tools/keeper` (Rust) | not ported; packedbox uses C/GTK |
+| eye-comfort wallpaper assets / Python timers | arch-machine — OUT of Phase 2 |
+| elomaxz Cmd install/maintenance effects | Phase 3.1 |
 | GTK4 UI | `native/packedbox-ui` Phase 4 |
 | Multi-distro CI matrix (Arch, Debian) | Phase 5 |
 
