@@ -9,7 +9,18 @@
 #   bash installers/fix-path.sh --install    # install core + rc hook + symlink
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve through ~/.local/bin/packedbox-fix-path symlink so lib/ is found.
+_script_source="${BASH_SOURCE[0]}"
+while [ -L "$_script_source" ]; do
+    _link_dir="$(cd "$(dirname "$_script_source")" && pwd)"
+    _script_source="$(readlink "$_script_source")"
+    case "$_script_source" in
+        /*) ;;
+        *) _script_source="$_link_dir/$_script_source" ;;
+    esac
+done
+SCRIPT_DIR="$(cd "$(dirname "$_script_source")" && pwd)"
+unset _script_source _link_dir
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # shellcheck source=installers/lib/packedbox-install.sh

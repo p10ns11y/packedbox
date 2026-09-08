@@ -43,17 +43,28 @@ fi
 
 cat <<'EOF'
 
+Cheat sheet: t (tmux) · tn (new/attach) · av (verify)
+First attach (not `tmux -s`):
+  source ~/.config/packedbox/core/env.sh
+  tn
+  cd project && av
+
 Reload tmux (inside a tmux session):
-  Prefix+q     (Ctrl+Space, release, then q)
+  Prefix+q     (Ctrl-b or Ctrl-Space, release, then q)
 
-Workflow keys — use SHIFT (capital letters):
-  Prefix+B     agent build   (Shift+b — not lowercase b)
-  Prefix+V     verify cockpit (Shift+v — not lowercase v = vertical split)
-  Prefix+T     test cockpit   (Shift+t)
+Prefix: Ctrl-b (status shows C-b; PREFIX lights when received) · Ctrl-Space (prefix2, optional)
+Launch: tn  (= t new -s packedbox; attach if exists)
+Must see a tmux status bar — bare Ghostty/xfce has no Prefix.
+Cloud desktop: if PREFIX never lights, type av / ab / at (supported path; no chord needed).
 
-Omarchy splits (unchanged, lowercase):
-  Prefix+h     split horizontal
-  Prefix+v     split vertical
+Workflow keys — use SHIFT (capital letters), or shell helpers:
+  ab / Prefix+B   agent build   (Shift+b — not lowercase b)
+  av / Prefix+V   verify cockpit (Shift+v — not lowercase v = vertical split)
+  at / Prefix+T   test cockpit   (Shift+t)
+
+Stock splits (lowercase / punctuation; host tmux.conf may override):
+  Prefix+%     split vertical
+  Prefix+"     split horizontal
 
 Keymap menu: Prefix+?  or click status-right
 EOF

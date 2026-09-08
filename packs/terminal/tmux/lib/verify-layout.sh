@@ -3,7 +3,7 @@
 # Sourced by tmux-layout.sh and agent-verify-layout.sh after verify-launch.sh.
 set -euo pipefail
 
-# tmux split-window -p: size of the *new* pane as % of the parent.
+# tmux split-window size: use -l N% (tmux 3.4+); -p N fails on Ubuntu 24.04 tmux 3.4.
 readonly VERIFY_LAYOUT_PHI_MAJOR=62
 readonly VERIFY_LAYOUT_PHI_MINOR=38
 
@@ -14,21 +14,21 @@ verify_layout_phi_minor() { printf '%s' "$VERIFY_LAYOUT_PHI_MINOR"; }
 verify_layout_split_git_ops() {
     local target="${1:?target}"
     local cwd="${2:-.}"
-    tmux split-window -h -t "$target" -c "$cwd" -p "$(verify_layout_phi_minor)"
+    tmux split-window -h -t "$target" -c "$cwd" -l "$(verify_layout_phi_minor)%"
 }
 
 # Pass 2: compact top — original becomes minor height (SYNC / confirm band).
 verify_layout_split_minor_top() {
     local target="${1:?target}"
     local cwd="${2:-.}"
-    tmux split-window -v -t "$target" -c "$cwd" -p "$(verify_layout_phi_major)"
+    tmux split-window -v -t "$target" -c "$cwd" -l "$(verify_layout_phi_major)%"
 }
 
 # Pass 2: watch major / CMD minor within the right bottom stack.
 verify_layout_split_watch_above_cmd() {
     local target="${1:?target}"
     local cwd="${2:-.}"
-    tmux split-window -v -t "$target" -c "$cwd" -p "$(verify_layout_phi_minor)"
+    tmux split-window -v -t "$target" -c "$cwd" -l "$(verify_layout_phi_minor)%"
 }
 
 # Nudge panes to φ proportions after splits (tmux reindexes panes during splits).

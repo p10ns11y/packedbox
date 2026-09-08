@@ -42,10 +42,48 @@ else
     ok 'fix-path --install deploys core'
 fi
 
+if [[ ! -f "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh" ]]; then
+    fail 'tmux-workflow.sh not installed to ~/.config/packedbox/core'
+else
+    ok 'fix-path --install deploys tmux-workflow.sh'
+fi
+
+if grep -qF 'tmux-workflow.sh' "$TEST_HOME/.config/packedbox/core/env.sh" \
+    && grep -qE '^ab\(\)|^av\(\)|^at\(\)|^t\(\)|^tn\(\)' "$TEST_HOME/.config/packedbox/core/tmux-workflow.sh"; then
+    ok 'installed env.sh sources tmux-workflow with ab/av/at/t/tn'
+else
+    fail 'installed env/tmux-workflow missing ab/av/at/t/tn wiring'
+fi
+
+# Fresh shell with bashrc managed block must define ab / av / at / t / tn (functions).
+# Ubuntu login shells source ~/.bashrc via ~/.profile — seed a minimal profile.
+printf '%s\n' \
+    'if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then . "$HOME/.bashrc"; fi' \
+    >"$TEST_HOME/.profile"
+if HOME="$TEST_HOME" bash -lc '
+    type ab >/dev/null && type av >/dev/null && type at >/dev/null \
+        && type t >/dev/null && type tn >/dev/null
+'; then
+    ok 'bashrc-managed shell defines ab/av/at/t/tn'
+else
+    fail 'bashrc-managed shell missing ab/av/at/t/tn'
+fi
+
 if [[ ! -x "$TEST_HOME/.local/bin/packedbox-fix-path" ]]; then
     fail 'packedbox-fix-path symlink missing'
 else
     ok 'fix-path --install registers packedbox-fix-path symlink'
+fi
+
+# Symlink must resolve SCRIPT_DIR through the link (recovery entrypoint).
+symlink_out=$(bash --norc "$TEST_HOME/.local/bin/packedbox-fix-path" 2>&1) || {
+    fail 'packedbox-fix-path symlink invocation failed'
+    printf '%s\n' "$symlink_out" >&2
+}
+if [[ "$symlink_out" == *"PATH contract applied"* ]]; then
+    ok 'packedbox-fix-path symlink applies PATH contract'
+else
+    fail "packedbox-fix-path symlink did not apply contract: $symlink_out"
 fi
 
 if ! grep -qF '# packedbox managed block begin' "$TEST_HOME/.bashrc" 2>/dev/null; then

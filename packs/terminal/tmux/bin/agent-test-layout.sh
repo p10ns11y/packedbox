@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test cockpit — btop (major left) + project tests (right shell pane).
+# Test cockpit — btop when available, else htop (Ubuntu main); + project tests.
 # Usage: agent-test-layout.sh [directory] [--watch] [--run]
 set -euo pipefail
 
@@ -41,7 +41,7 @@ if ! command -v tmux >/dev/null 2>&1; then
 fi
 
 if [ -z "${TMUX:-}" ]; then
-    echo "$SCRIPT_NAME: must run inside tmux" >&2
+    echo "run: tn  (then at)" >&2
     exit 1
 fi
 
@@ -56,7 +56,11 @@ DIR="$(verify_workflow_root "$DIR")"
 SESSION="$(tmux display-message -p '#{session_name}')"
 WIN="${SESSION}:test"
 CREATED=0
-TEST_CMD=""
+if [ "$WATCH" = 1 ]; then
+    TEST_CMD="$(project_test_cmd "$DIR" watch)"
+else
+    TEST_CMD="$(project_test_cmd "$DIR" once)"
+fi
 
 test_layout_ok() {
     local wh ww btop_h btop_w pane_count
@@ -97,11 +101,6 @@ test_launch_pane() {
 if test_layout_ok; then
     tmux select-window -t 'test'
     if [ "$RUN_ONLY" = 1 ]; then
-        if [ "$WATCH" = 1 ]; then
-            TEST_CMD="$(project_test_cmd "$DIR" watch)"
-        else
-            TEST_CMD="$(project_test_cmd "$DIR" once)"
-        fi
         tmux send-keys -t "${WIN}.1" C-c 2>/dev/null || true
         test_launch_pane "${WIN}.1" 'TEST' "$TEST_CMD"
         tmux select-pane -t "${WIN}.1"
@@ -114,22 +113,20 @@ else
     fi
     tmux new-window -n test -c "$DIR"
     tmux set-window-option -t "$WIN" pane-base-index 0
-    tmux split-window -h -t "$WIN" -c "$DIR" -p "$LAYOUT_PHI_MINOR"
+    tmux split-window -h -t "$WIN" -c "$DIR" -l "${LAYOUT_PHI_MINOR}%"
 
     w="$(tmux display-message -p -t "$WIN" '#{window_width}')"
     tmux resize-pane -t "${WIN}.0" -x $((w * LAYOUT_PHI_MAJOR / 100))
 
     if command -v btop >/dev/null 2>&1; then
         test_launch_pane "${WIN}.0" 'BTOP' btop
+    elif command -v htop >/dev/null 2>&1; then
+        test_launch_pane "${WIN}.0" 'HTOP' htop
     else
-        test_launch_pane "${WIN}.0" 'BTOP' "echo 'btop not installed (optional: pacman -S btop)'"
+        test_launch_pane "${WIN}.0" 'HTOP' \
+            "$(verify_missing_pkg_echo htop 'htop not installed')"
     fi
 
-    if [ "$WATCH" = 1 ]; then
-        TEST_CMD="$(project_test_cmd "$DIR" watch)"
-    else
-        TEST_CMD="$(project_test_cmd "$DIR" once)"
-    fi
     test_launch_pane "${WIN}.1" 'TEST' "$TEST_CMD"
     CREATED=1
 fi

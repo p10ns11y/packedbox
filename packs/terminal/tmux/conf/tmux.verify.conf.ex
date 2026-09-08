@@ -3,22 +3,36 @@
 # Managed by packedbox packs/terminal
 #
 # INSTALL / REFRESH (not sourced in zsh — tmux loads this file):
-#   ~/.config/shell/bin/sync-tmux-verify.sh
-#   then inside tmux: Prefix+q  (Ctrl+Space, then q)
+#   ~/.config/packedbox/packs/terminal/tmux/bin/sync-tmux-verify.sh
+#   then inside tmux: Prefix+q  (Ctrl-b, then q — or Ctrl-Space, then q)
 #
-# Omarchy prefix = Ctrl+Space (prefix2 = Ctrl+b).
+# PREFIX (Ubuntu / default packedbox):
+#   prefix  = Ctrl-b     (always — status-right shows "C-b"; PREFIX lights when received)
+#   prefix2 = Ctrl-Space (Omarchy-friendly optional second prefix; often eaten by browsers/IME)
+# Prefer: tn  (or: /usr/bin/tmux -f ~/.config/tmux/tmux.conf) so Cursor /exec-daemon/tmux
+#   is not nested by mistake. You must see a tmux status bar ([packedbox] …) — bare
+#   Ghostty/xfce4-terminal shells have no Prefix.
 #
-# WORKFLOW KEYS — SHIFTED letters (match shell aliases ab / av / at):
+# CLOUD DESKTOP: if Ctrl-b never lights PREFIX in the status bar, the remote viewer is
+# swallowing the chord. Supported path then: type  av / ab / at  (no Prefix needed).
+#
+# WORKFLOW KEYS — SHIFTED letters (match shell helpers ab / av / at):
 #   Prefix+B   agent build   — Shift+b  (lowercase b is NOT bound here)
 #   Prefix+V   verify cockpit — Shift+v  (lowercase v = vertical split, unchanged)
 #   Prefix+T   test cockpit   — Shift+t
 #   Prefix+?   keymap menu (or click status-right)
 #   Prefix+Z   zoom pane
 #   Prefix+Space  cycle layout
+#   Prefix+q   reload ~/.config/tmux/tmux.conf
 #
-# SPLITS (Omarchy defaults in tmux.conf — do not change):
-#   Prefix+h   split horizontal (pane below)
-#   Prefix+v   split vertical (pane right)
+# Shell helpers (sourced from core/env.sh → core/tmux-workflow.sh):
+#   ab / agent_build    → agent-build-layout.sh
+#   av / agent_verify   → agent-verify-layout.sh
+#   at / agent_test     → agent-test-layout.sh
+#
+# SPLITS (stock tmux defaults unless your host tmux.conf overrides):
+#   Prefix+%   split vertical (pane right)
+#   Prefix+"   split horizontal (pane below)
 
 # Workflow labels (set by agent-build / agent-verify layout scripts)
 # @workflow_mode is build | verify | empty. @workflow_dir holds the project path.
@@ -26,23 +40,32 @@
 set -g @workflow_status on
 set -g @workflow_mode ''
 
+# Explicit prefix story — Ctrl-b always; Ctrl-Space as optional second prefix.
+set -g prefix C-b
+set -g prefix2 C-Space
+bind C-b send-prefix
+bind C-Space send-prefix -2
+
 source-file ~/.config/packedbox/packs/terminal/tmux/conf/tmux.status-mode.conf.ex
 
 # Keymap helper — Prefix+? or click status-right
-bind ? run-shell '~/.config/shell/bin/tmux-keymap-menu.sh'
-bind -n MouseDown1StatusRight run-shell '~/.config/shell/bin/tmux-keymap-menu.sh'
+bind ? run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-keymap-menu.sh'
+bind -n MouseDown1StatusRight run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-keymap-menu.sh'
+
+# Reload config (Prefix+q) — matches keymap menu / shellyxz docs
+bind q source-file ~/.config/tmux/tmux.conf \; display-message 'tmux.conf reloaded'
 
 # Zoom active pane (Prefix+Z) — ad-hoc full width inside any window
 bind Z resize-pane -Z
 
 # Cycle layouts (Prefix+Space) — golden φ on verify window, tmux next-layout elsewhere
-bind Space run-shell '~/.config/shell/bin/tmux-cycle-layout.sh'
+bind Space run-shell '~/.config/packedbox/packs/terminal/tmux/bin/tmux-cycle-layout.sh'
 
 # Agent build (Prefix+B) — ab / agent_build
-bind B run-shell '~/.config/shell/bin/agent-build-layout.sh "#{pane_current_path}"'
+bind B run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-build-layout.sh "#{pane_current_path}"'
 
 # Verification cockpit (Prefix+V) — av / agent_verify
-bind V run-shell '~/.config/shell/bin/agent-verify-layout.sh "#{pane_current_path}"'
+bind V run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-verify-layout.sh "#{pane_current_path}"'
 
 # Test cockpit (Prefix+T) — at / agent_test
-bind T run-shell '~/.config/shell/bin/agent-test-layout.sh "#{pane_current_path}"'
+bind T run-shell '~/.config/packedbox/packs/terminal/tmux/bin/agent-test-layout.sh "#{pane_current_path}"'

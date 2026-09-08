@@ -7,13 +7,13 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DATA="$(cd "$SCRIPT_DIR/../data" && pwd)"
 KEYMAP_FILE="${TMUX_KEYMAP_FILE:-$PLUGIN_DATA/tmux-keymaps.tsv}"
-BUILD="$HOME/.config/shell/bin/agent-build-layout.sh"
-VERIFY="$HOME/.config/shell/bin/agent-verify-layout.sh"
-TEST="$HOME/.config/shell/bin/agent-test-layout.sh"
-CYCLE="$HOME/.config/shell/bin/tmux-cycle-layout.sh"
+BUILD="$SCRIPT_DIR/agent-build-layout.sh"
+VERIFY="$SCRIPT_DIR/agent-verify-layout.sh"
+TEST="$SCRIPT_DIR/agent-test-layout.sh"
+CYCLE="$SCRIPT_DIR/tmux-cycle-layout.sh"
 
 if [ -z "${TMUX:-}" ]; then
-    echo "tmux-keymap-menu: must run inside tmux" >&2
+    echo "run: tn  (then Prefix+?)" >&2
     exit 1
 fi
 

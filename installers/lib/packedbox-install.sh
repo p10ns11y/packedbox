@@ -82,6 +82,9 @@ packedbox_install_core() {
     install -m 0644 "$src_root/core/env.sh" "$dest/core/"
     install -m 0644 "$src_root/core/lib.sh" "$dest/core/"
     install -m 0644 "$src_root/core/tool.contract" "$dest/core/"
+    if [[ -f "$src_root/core/tmux-workflow.sh" ]]; then
+        install -m 0644 "$src_root/core/tmux-workflow.sh" "$dest/core/"
+    fi
     install -m 0755 "$src_root/core/recover.sh" "$dest/core/"
     install -m 0755 "$src_root/core/check-path.sh" "$dest/core/"
     if [[ -f "$src_root/environments/generic/env.sh" ]]; then

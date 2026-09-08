@@ -46,8 +46,13 @@ Root [AGENTS.md](AGENTS.md) lists build/test commands, owner (**Steward** — ma
 git clone https://github.com/p10ns11y/packedbox.git
 cd packedbox
 
-# Ubuntu bootstrap: install core + recovery helper
-./adapters/ubuntu/install.sh
+# Distro bootstrap: install core + recovery helper
+./adapters/ubuntu/install.sh    # or debian / arch
+
+# + terminal pack (tmux/neovim + best-effort Ghostty + configs)
+./adapters/ubuntu/install.sh --with-terminal
+./adapters/debian/install.sh --with-terminal
+./adapters/arch/install.sh --with-terminal
 
 # Or PATH recovery only (works from bash --norc when rc files break)
 ./installers/fix-path.sh --install
@@ -63,9 +68,25 @@ Full installer orchestration (`installers/install.sh --distro`) lands in a later
 
 ```bash
 ./packs/terminal/install.sh
-# or on Arch:
+# or one-shot per distro:
+./adapters/ubuntu/install.sh --with-terminal
+./adapters/debian/install.sh --with-terminal
 ./adapters/arch/install.sh --with-terminal
 ```
+
+Prefer **Ghostty** when available (`ghostty`). First attach (not `tmux -s`):
+
+```bash
+source ~/.config/packedbox/core/env.sh
+tn
+cd /path/to/project && av
+```
+
+Cheat sheet: `t` · `tn` · `av` · Prefix **Ctrl-b** (also Ctrl-Space). Full workflow, keys, and install hints: [packs/terminal/README.md](packs/terminal/README.md).
+
+**Cursor caveat:** Cursor IDE often intercepts Ctrl-b / Ctrl-Space — prefer `av`/`ab`/`at` inside Cursor; use Ghostty outside Cursor for Prefix binds.
+
+**Persistence:** packages and `~/.config` installs are per-machine — re-run `./adapters/<distro>/install.sh --with-terminal` on new cloud agents (or bake into an environment snapshot).
 
 ### CLI status (Phase 3)
 

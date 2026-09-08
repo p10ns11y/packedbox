@@ -1,0 +1,172 @@
+#!/usr/bin/env sh
+# packedbox core/tmux-workflow.sh — thin shellyxz-style ab / av / at helpers.
+# Provenance: shellyxz.sh core/aliases.sh + agent_* slice of core/functions.sh (trimmed).
+# Calls packs/terminal/tmux/bin layout scripts; does not pull the full functions.sh melt.
+
+_packedbox_root() {
+    printf '%s\n' "${PACKEDBOX_ROOT:-$HOME/.config/packedbox}"
+}
+
+_packedbox_is_dir_arg() {
+    [ "$1" = . ] || [ -d "$1" ]
+}
+
+# $1 = next helper name shown in the first-run one-liner (ab|av|at).
+_packedbox_tmux_guard() {
+    _pb_next="${1:-av}"
+    if [ -z "${TMUX:-}" ]; then
+        echo "run: tn  (then ${_pb_next})" >&2
+        return 1
+    fi
+}
+
+_packedbox_layout_script() {
+    _pb_layout_script="$(_packedbox_root)/packs/terminal/tmux/bin/$1"
+    if [ ! -x "$_pb_layout_script" ]; then
+        echo "packedbox: missing $_pb_layout_script (run packs/terminal/install.sh)" >&2
+        return 1
+    fi
+    printf '%s\n' "$_pb_layout_script"
+}
+
+# Prefer distro tmux over Cursor /exec-daemon/tmux when both exist.
+packedbox_tmux() {
+    if [ -x /usr/bin/tmux ]; then
+        /usr/bin/tmux "$@"
+    else
+        command tmux "$@"
+    fi
+}
+
+# Always load packedbox conf via /usr/bin/tmux (avoids Cursor /exec-daemon/tmux).
+# Not `tmux -s` — that flag does not create a session. Prefer: tn
+pb_tmux() {
+    _pb_tmux_conf="${HOME}/.config/tmux/tmux.conf"
+    if [ -f "$_pb_tmux_conf" ]; then
+        packedbox_tmux -f "$_pb_tmux_conf" "$@"
+    else
+        packedbox_tmux "$@"
+    fi
+}
+
+# Short aliases for pb_tmux (e.g. t ls, t attach -t foo, pb attach -t packedbox).
+t() { pb_tmux "$@"; }
+pb() { pb_tmux "$@"; }
+
+# tn — new packedbox session (default name: packedbox). Attach if it already exists.
+tn() {
+    _pb_tn_name="${1:-packedbox}"
+    if [ $# -gt 0 ]; then
+        shift
+    fi
+    if pb_tmux has-session -t "$_pb_tn_name" 2>/dev/null; then
+        pb_tmux attach-session -t "$_pb_tn_name"
+    else
+        pb_tmux new-session -s "$_pb_tn_name" "$@"
+    fi
+}
+
+agent_build() {
+    _packedbox_tmux_guard ab || return 1
+    _pb_script="$(_packedbox_layout_script agent-build-layout.sh)" || return 1
+    # Default cwd to $PWD (shellyxz UX); callers may pass an explicit directory.
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -c | --continue | --strict)
+                break
+                ;;
+            *)
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
+                    _pb_dir="$1"
+                    _pb_dir_set=1
+                    shift
+                else
+                    break
+                fi
+                ;;
+        esac
+    done
+    "$_pb_script" "$_pb_dir" "$@"
+}
+
+agent_verify() {
+    _packedbox_tmux_guard av || return 1
+    _pb_script="$(_packedbox_layout_script agent-verify-layout.sh)" || return 1
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
+    _pb_scan=0
+    _pb_mutate=0
+    _pb_generic=0
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --scan)
+                _pb_scan=1
+                shift
+                ;;
+            --generic)
+                _pb_generic=1
+                shift
+                ;;
+            --launch-mutate)
+                _pb_mutate=1
+                shift
+                ;;
+            *)
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
+                    _pb_dir="$1"
+                    _pb_dir_set=1
+                    shift
+                else
+                    echo "agent_verify: unknown argument: $1" >&2
+                    return 1
+                fi
+                ;;
+        esac
+    done
+    set -- "$_pb_dir"
+    if [ "$_pb_generic" = 1 ]; then
+        set -- "$@" --generic
+    fi
+    case "${_pb_scan}${_pb_mutate}" in
+        11) AGENT_VERIFY_RESCAN=1 AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@" ;;
+        10) AGENT_VERIFY_RESCAN=1 "$_pb_script" "$@" ;;
+        01) AGENT_VERIFY_LAUNCH_MUTATE=1 "$_pb_script" "$@" ;;
+        *) "$_pb_script" "$@" ;;
+    esac
+}
+
+agent_test() {
+    _packedbox_tmux_guard at || return 1
+    _pb_script="$(_packedbox_layout_script agent-test-layout.sh)" || return 1
+    _pb_dir="${PWD:-.}"
+    _pb_dir_set=0
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --watch | --run)
+                break
+                ;;
+            *)
+                if [ "$_pb_dir_set" = 0 ] && _packedbox_is_dir_arg "$1"; then
+                    _pb_dir="$1"
+                    _pb_dir_set=1
+                    shift
+                else
+                    break
+                fi
+                ;;
+        esac
+    done
+    "$_pb_script" "$_pb_dir" "$@"
+}
+
+agent_back() {
+    agent_build -c
+}
+
+# Shellyxz UX names (ab / av / at). `at` shadows batch at(1) intentionally.
+# Functions (not aliases) so they work in non-interactive bash and `type` finds them.
+ab() { agent_build "$@"; }
+av() { agent_verify "$@"; }
+at() { agent_test "$@"; }

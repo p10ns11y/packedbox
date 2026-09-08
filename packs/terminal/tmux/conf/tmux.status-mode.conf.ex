@@ -3,5 +3,5 @@
 set -g @editor_mode ''
 set -g status-interval 1
 
-set-hook -g pane-focus-out 'run-shell -d 0 "~/.config/shell/bin/tmux-mode-sync.sh pane-focus-out"'
-run-shell -d 0 '~/.config/shell/bin/tmux-mode-sync.sh apply workflow'
+set-hook -g pane-focus-out 'run-shell -d 0 "~/.config/packedbox/packs/terminal/tmux/bin/tmux-mode-sync.sh pane-focus-out"'
+run-shell -d 0 '~/.config/packedbox/packs/terminal/tmux/bin/tmux-mode-sync.sh apply workflow'

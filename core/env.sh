@@ -32,6 +32,12 @@ path_deny_sweep
 path_dedupe
 tool_contract_apply
 
+# t / tn / ab / av / at + agent_* → packs/terminal layout bins (when terminal pack is installed).
+if [ -f "$PACKEDBOX_ROOT/core/tmux-workflow.sh" ]; then
+    # shellcheck disable=SC1091
+    . "$PACKEDBOX_ROOT/core/tmux-workflow.sh"
+fi
+
 if [ -f "$PACKEDBOX_ROOT/local/overwrite.sh" ]; then
     # shellcheck disable=SC1091
     . "$PACKEDBOX_ROOT/local/overwrite.sh"

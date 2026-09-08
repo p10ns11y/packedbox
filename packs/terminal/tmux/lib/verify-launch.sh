@@ -6,6 +6,95 @@ set -euo pipefail
 VERIFY_LAUNCH_LIB_DIR="${VERIFY_LAUNCH_LIB_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 VERIFY_PLUGIN_ROOT="${VERIFY_PLUGIN_ROOT:-$(cd "$VERIFY_LAUNCH_LIB_DIR/.." && pwd)}"
 VERIFY_PANE_LAUNCH="${VERIFY_PANE_LAUNCH:-$VERIFY_PLUGIN_ROOT/bin/verify-pane-launch.sh}"
+# Override in tests: path to an os-release file (default /etc/os-release).
+VERIFY_OS_RELEASE="${VERIFY_OS_RELEASE:-/etc/os-release}"
+
+# Distro family from os-release: arch | debian | unknown
+verify_os_family() {
+    local id="" id_like=""
+    if [ -r "$VERIFY_OS_RELEASE" ]; then
+        # One source pass in a subshell so ID/ID_LIKE do not leak into callers.
+        # shellcheck disable=SC1090
+        {
+            IFS= read -r id
+            IFS= read -r id_like
+        } < <(
+            set +u
+            . "$VERIFY_OS_RELEASE"
+            printf '%s\n%s\n' "${ID:-}" "${ID_LIKE:-}"
+        )
+    fi
+    case "$id" in
+        arch | endeavouros | manjaro | cachyos)
+            printf '%s' arch
+            return 0
+            ;;
+        debian | ubuntu | linuxmint | pop)
+            printf '%s' debian
+            return 0
+            ;;
+    esac
+    case " ${id_like} " in
+        *" arch "* | *" archlinux "*)
+            printf '%s' arch
+            return 0
+            ;;
+        *" debian "* | *" ubuntu "*)
+            printf '%s' debian
+            return 0
+            ;;
+    esac
+    printf '%s' unknown
+}
+
+# Optional install command for a missing tool (no package-manager guess for unknown).
+# lazygit: not in Ubuntu 24.04 / Debian 12 default apt — prefer go install.
+# Process monitor: Ubuntu/Debian main has htop; btop is universe-only — prefer htop hints.
+verify_optional_install_cmd() {
+    local pkg="${1:?pkg}"
+    local family
+    family="$(verify_os_family)"
+    case "$family" in
+        arch)
+            # lazygit and btop are in official repos (not AUR).
+            printf 'sudo pacman -S %s' "$pkg"
+            ;;
+        debian)
+            case "$pkg" in
+                lazygit)
+                    printf 'go install github.com/jesseduffield/lazygit@latest'
+                    ;;
+                btop | htop)
+                    # htop is in main; btop may be missing from minimal images — suggest htop.
+                    printf 'sudo apt install htop'
+                    ;;
+                *)
+                    printf 'sudo apt install %s' "$pkg"
+                    ;;
+            esac
+            ;;
+        *)
+            printf 'install %s' "$pkg"
+            ;;
+    esac
+}
+
+# Echo command for a missing optional pane tool, distro-aware.
+# lead: short lead-in, e.g. "install lazygit" or "btop not installed"
+verify_missing_pkg_echo() {
+    local pkg="${1:?pkg}"
+    local lead="${2:?lead}"
+    local cmd
+    cmd="$(verify_optional_install_cmd "$pkg")"
+    case "$cmd" in
+        "install $pkg")
+            printf "echo '%s'" "$lead"
+            ;;
+        *)
+            printf "echo '%s (optional: %s)'" "$lead" "$cmd"
+            ;;
+    esac
+}
 
 # Pane index base for the verify window (0 by default; may be 1 in user tmux config).
 verify_pane_base() {
@@ -161,8 +250,8 @@ verify_apply_theme() {
     local session="${1:?session}"
     local project="${2:-}"
     local risk="${3:-medium}"
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}"
-    local soc_ex="${shell_root}/tmux.verify-soc-theme.conf.ex"
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}"
+    local soc_ex="${shell_root}/packs/terminal/tmux/conf/tmux.verify-soc-theme.conf.ex"
     if [ ! -f "$soc_ex" ]; then
         soc_ex="${VERIFY_PLUGIN_ROOT}/conf/tmux.verify-soc-theme.conf.ex"
     fi
@@ -264,7 +353,7 @@ agent_strict_path_enabled() {
 }
 
 agent_strict_path_apply() {
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}"
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}"
     # shellcheck disable=SC1091
     . "$shell_root/core/path.sh"
     path_contract_apply_core_only
@@ -272,7 +361,7 @@ agent_strict_path_apply() {
 }
 
 agent_strict_path_check() {
-    local shell_root="${SHELL_ROOT:-$HOME/.config/shell}" saved_path
+    local shell_root="${SHELL_ROOT:-$HOME/.config/packedbox}" saved_path
     saved_path="$PATH"
     # Source in this shell — $(agent_strict_path_apply) runs a subshell and drops path_shadow_report.
     # shellcheck disable=SC1091
