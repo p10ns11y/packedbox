@@ -7,7 +7,7 @@ description: Work on packedbox — portable Linux bootstrap (Arch/Debian/Ubuntu)
 
 ## Product
 
-**packedbox** (formerly *boxy*) — multi-distro bootstrap melting:
+**packedbox** — multi-distro bootstrap melting:
 
 - [shellyxz.sh](https://github.com/p10ns11y/shellyxz.sh) `master` — shell kernel, PATH, recovery, tmux verify
 - [arch-machine](https://github.com/p10ns11y/arch-machine) `sentinel` — Arch profiles, Ghostty themes, maintenance

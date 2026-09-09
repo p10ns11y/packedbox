@@ -2,8 +2,6 @@
 
 Portable Linux bootstrap for **Arch** (± Omarchy), **Debian**, and **Ubuntu**: a shared PATH contract, terminal pack (Ghostty + tmux + Neovim), and a thin native control plane (C CLI + GTK UI).
 
-> **Rename note:** This product was previously called *boxy*. Upstream repos and historical docs may still use the old name; packedbox is the canonical name going forward.
-
 ## What packedbox is
 
 | Layer | Role |
